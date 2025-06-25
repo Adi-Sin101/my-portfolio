@@ -20,3 +20,22 @@ function rotaterole()
     }, 500); // Adjust the timeout to match the CSS transition duration.
 }
 setInterval(rotaterole,2500); // Change the interval to control how often the role changes.
+
+document.addEventListener("DOMContentLoaded", () => {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const fills = entry.target.querySelectorAll(".progress-fill");
+        fills.forEach(fill => {
+          fill.style.width = fill.getAttribute("data-percentage");
+        });
+      }
+    });
+  }, {
+    threshold: 0.3
+  });
+
+  document.querySelectorAll(".skill-card").forEach(card => {
+    observer.observe(card);
+  });
+});
