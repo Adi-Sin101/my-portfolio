@@ -39,3 +39,49 @@ document.addEventListener("DOMContentLoaded", () => {
     observer.observe(card);
   });
 });
+// Dark mode toggle
+document.getElementById("darkModeToggle").addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+});
+
+// Fade-in scroll animation
+const faders = document.querySelectorAll(".fade-in");
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("visible");
+    }
+  });
+}, { threshold: 0.1 });
+
+faders.forEach(fadeEl => observer.observe(fadeEl));
+
+// Modal logic
+const modal = document.getElementById("experienceModal");
+const modalImage = document.getElementById("modalImage");
+const modalText = document.getElementById("modalText");
+const closeModal = document.querySelector(".close-modal");
+
+document.querySelectorAll(".experience-card").forEach(card => {
+  card.addEventListener("click", () => {
+    const imgSrc = card.querySelector("img").src;
+    const title = card.querySelector("h4").textContent;
+    const company = card.querySelector(".company").textContent;
+    const desc = card.querySelector("p:not(.company)").textContent;
+
+    modalImage.src = imgSrc;
+    modalText.innerHTML = `<h3>${title}</h3><p><strong>${company}</strong></p><p>${desc}</p>`;
+    modal.style.display = "block";
+  });
+});
+
+closeModal.addEventListener("click", () => {
+  modal.style.display = "none";
+});
+
+window.addEventListener("click", e => {
+  if (e.target === modal) modal.style.display = "none";
+});
+
+
