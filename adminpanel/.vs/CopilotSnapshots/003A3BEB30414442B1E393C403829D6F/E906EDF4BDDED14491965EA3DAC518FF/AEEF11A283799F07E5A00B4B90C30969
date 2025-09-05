@@ -1,0 +1,275 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Data;
+
+namespace adminpanel
+{
+    public partial class Home : System.Web.UI.Page
+    {
+        string cs = ConfigurationManager.ConnectionStrings["AdminPanelDB"].ConnectionString;
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            // Check if user is authenticated
+            if (Session["AdminUser"] == null)
+            {
+                Response.Redirect("Login.aspx");
+            }
+
+            if (!IsPostBack)
+            {
+                LoadPortfolioData();
+            }
+        }
+
+        private void LoadPortfolioData()
+        {
+            LoadPersonalInfo();
+            LoadProjects();
+            LoadSkills();
+            LoadExperience();
+            LoadEducation();
+        }
+
+        private void LoadPersonalInfo()
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    string query = "SELECT * FROM PersonalInfo WHERE IsActive = 1";
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    
+                    if (reader.Read())
+                    {
+                        ltlName.Text = reader["FullName"].ToString();
+                        ltlNavName.Text = reader["FullName"].ToString();
+                        ltlHeroName.Text = reader["FullName"].ToString();
+                        ltlRole.Text = reader["Role"].ToString();
+                        ltlHeroDescription.Text = reader["HeroDescription"].ToString();
+                        ltlAboutDescription.Text = reader["AboutDescription"].ToString();
+
+                        // Social links
+                        hlnkGitHub.NavigateUrl = reader["GitHubUrl"].ToString();
+                        hlnkLinkedIn.NavigateUrl = reader["LinkedInUrl"].ToString();
+                        hlnkEmail.NavigateUrl = "mailto:" + reader["Email"].ToString();
+                        hlnkPhone.NavigateUrl = "tel:" + reader["Phone"].ToString();
+                        hlnkResume.NavigateUrl = reader["ResumeUrl"].ToString();
+
+                        // Contact section
+                        hlnkContactEmail.Text = reader["Email"].ToString();
+                        hlnkContactEmail.NavigateUrl = "mailto:" + reader["Email"].ToString();
+                        hlnkContactLinkedIn.Text = reader["LinkedInText"].ToString();
+                        hlnkContactLinkedIn.NavigateUrl = reader["LinkedInUrl"].ToString();
+                        hlnkContactGitHub.Text = reader["GitHubText"].ToString();
+                        hlnkContactGitHub.NavigateUrl = reader["GitHubUrl"].ToString();
+                        hlnkContactPhone.Text = reader["Phone"].ToString();
+                        hlnkContactPhone.NavigateUrl = "tel:" + reader["Phone"].ToString();
+
+                        // Profile image
+                        if (!string.IsNullOrEmpty(reader["ProfileImagePath"].ToString()))
+                        {
+                            imgHero.ImageUrl = reader["ProfileImagePath"].ToString();
+                        }
+                    }
+                    reader.Close();
+                }
+                catch (Exception ex)
+                {
+                    // Set default values if PersonalInfo table doesn't exist
+                    SetDefaultPersonalInfo();
+                }
+            }
+        }
+
+        private void SetDefaultPersonalInfo()
+        {
+            ltlName.Text = "Adiba Tahsin";
+            ltlNavName.Text = "Adiba Tahsin";
+            ltlHeroName.Text = "Adiba Tahsin";
+            ltlRole.Text = "Web Developer";
+            ltlHeroDescription.Text = "A Computer Science student with a strong foundation in frontend development and programming...";
+            ltlAboutDescription.Text = "I am Adiba Tahsin, a passionate and driven Computer Science student at KUET. I thrive on building engaging digital experiences and solving real-world problems through technology.";
+            
+            hlnkGitHub.NavigateUrl = "https://github.com/Adi-Sin101";
+            hlnkLinkedIn.NavigateUrl = "https://www.linkedin.com/in/adiba-tahsin-985b452a2";
+            hlnkEmail.NavigateUrl = "mailto:adiba0tahsin@gmail.com";
+            hlnkPhone.NavigateUrl = "tel:+8801882083192";
+            hlnkResume.NavigateUrl = "Adiba_CV.pdf";
+
+            hlnkContactEmail.Text = "adiba0tahsin@gmail.com";
+            hlnkContactEmail.NavigateUrl = "mailto:adiba0tahsin@gmail.com";
+            hlnkContactLinkedIn.Text = "adiba-tahsin-985b452a2";
+            hlnkContactLinkedIn.NavigateUrl = "https://www.linkedin.com/in/adiba-tahsin-985b452a2";
+            hlnkContactGitHub.Text = "Adi-Sin101";
+            hlnkContactGitHub.NavigateUrl = "https://github.com/Adi-Sin101";
+            hlnkContactPhone.Text = "+8801882083192";
+            hlnkContactPhone.NavigateUrl = "tel:+8801882083192";
+        }
+
+        private void LoadProjects()
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    string query = "SELECT Id, Title, Description, ImagePath, TechUsed, GitUrl FROM Projects ORDER BY CreatedDate DESC";
+                    SqlDataAdapter da = new SqlDataAdapter(query, con);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    
+                    rptProjects.DataSource = dt;
+                    rptProjects.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    // Handle error - projects table might not exist
+                    rptProjects.DataSource = GetDefaultProjects();
+                    rptProjects.DataBind();
+                }
+            }
+        }
+
+        private void LoadSkills()
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    string query = "SELECT Name, IconUrl, Percentage FROM Skills ORDER BY DisplayOrder";
+                    SqlDataAdapter da = new SqlDataAdapter(query, con);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    
+                    rptSkills.DataSource = dt;
+                    rptSkills.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    // Handle error - skills table might not exist
+                    rptSkills.DataSource = GetDefaultSkills();
+                    rptSkills.DataBind();
+                }
+            }
+        }
+
+        private void LoadExperience()
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    string query = "SELECT Title, Company, Duration, Description, ImagePath FROM Experience ORDER BY StartDate DESC";
+                    SqlDataAdapter da = new SqlDataAdapter(query, con);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    
+                    rptExperience.DataSource = dt;
+                    rptExperience.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    // Handle error - experience table might not exist
+                    rptExperience.DataSource = GetDefaultExperience();
+                    rptExperience.DataBind();
+                }
+            }
+        }
+
+        private void LoadEducation()
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    string query = "SELECT Degree, Institution, Year, Grade FROM Education ORDER BY StartYear DESC";
+                    SqlDataAdapter da = new SqlDataAdapter(query, con);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    
+                    rptEducation.DataSource = dt;
+                    rptEducation.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    // Handle error - education table might not exist
+                    rptEducation.DataSource = GetDefaultEducation();
+                    rptEducation.DataBind();
+                }
+            }
+        }
+
+        // Default data methods for when tables don't exist
+        private DataTable GetDefaultProjects()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Title");
+            dt.Columns.Add("Description");
+            dt.Columns.Add("ImagePath");
+            dt.Columns.Add("TechUsed");
+            dt.Columns.Add("GitUrl");
+
+            dt.Rows.Add("Portfolio Website", "A personal portfolio website to showcase my projects, skills, and experience. Built with HTML, CSS, and JavaScript for a modern, responsive design.", "portfilo.png", "<span class='tool'>HTML</span>, <span class='tool'>CSS</span>, <span class='tool'>JavaScript</span>", "https://github.com/Adi-Sin101/my-portfolio.git");
+            dt.Rows.Add("PawPal (Petcare App)", "PawPal is an Android app that helps pet owners manage daily activities, health records, expenses, and vet contacts.", "pawpal.jpeg", "<span class='tool'>Android</span>, <span class='tool'>Java</span>, <span class='tool'>Firebase</span>", "https://github.com/Adi-Sin101/PawPal_Android.git");
+            
+            return dt;
+        }
+
+        private DataTable GetDefaultSkills()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Name");
+            dt.Columns.Add("IconUrl");
+            dt.Columns.Add("Percentage");
+
+            dt.Rows.Add("HTML5", "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg", "90");
+            dt.Rows.Add("CSS3", "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg", "85");
+            dt.Rows.Add("JavaScript", "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg", "0");
+            dt.Rows.Add("React", "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg", "0");
+            
+            return dt;
+        }
+
+        private DataTable GetDefaultExperience()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Title");
+            dt.Columns.Add("Company");
+            dt.Columns.Add("Duration");
+            dt.Columns.Add("Description");
+            dt.Columns.Add("ImagePath");
+
+            dt.Rows.Add("Campus Ambassador", "She-STEM", "Aug 2025 - Present", "Serving as the She-STEM Campus Ambassador at KUET, promoting STEM education among female students.", "SheStem.jpg");
+            dt.Rows.Add("Assistant Operations Secretary", "KUET Business and Entrepreneurship Club", "April 2024 – Present", "Responsible for assisting in strategic planning and execution of club initiatives.", "KBEC_member.jpg");
+            
+            return dt;
+        }
+
+        private DataTable GetDefaultEducation()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Degree");
+            dt.Columns.Add("Institution");
+            dt.Columns.Add("Year");
+            dt.Columns.Add("Grade");
+
+            dt.Rows.Add("B.Sc in Computer Science", "Khulna University of Engineering & Technology", "Expected: 2027", "CGPA: 3.28 / 4.00");
+            dt.Rows.Add("HSC", "Khulna Govt. Girls' College", "2021", "GPA: 5.00");
+            dt.Rows.Add("SSC", "Govt. Coronation Secondary Girls' School", "2019", "GPA: 5.00");
+            
+            return dt;
+        }
+    }
+}

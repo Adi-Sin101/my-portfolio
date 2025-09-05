@@ -1,0 +1,441 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Data;
+using System.IO;
+
+namespace adminpanel
+{
+    public partial class Projects : System.Web.UI.Page
+    {
+        string cs = ConfigurationManager.ConnectionStrings["AdminPanelDB"].ConnectionString;
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            // Check if user is authenticated
+            if (Session["AdminUser"] == null)
+            {
+                Response.Redirect("Login.aspx");
+            }
+
+            if (!IsPostBack)
+            {
+                LoadProjects();
+            }
+        }
+
+        void LoadProjects()
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    
+                    // Debug: First check total count
+                    string countQuery = "SELECT COUNT(*) FROM Projects";
+                    SqlCommand countCmd = new SqlCommand(countQuery, con);
+                    int totalCount = (int)countCmd.ExecuteScalar();
+                    
+                    // Use the correct column name ImagePath
+                    SqlDataAdapter da = new SqlDataAdapter("SELECT Id, Title, Description, ImagePath, TechUsed, GitUrl FROM Projects ORDER BY Id DESC", con);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    
+                    gvProjects.DataSource = dt;
+                    gvProjects.DataBind();
+                    
+                    // Debug info to console
+                    Response.Write($"<script>console.log('LoadProjects: Found {totalCount} total projects, {dt.Rows.Count} loaded for display');</script>");
+                    
+                    // If no projects, show a message
+                    if (totalCount == 0)
+                    {
+                        Response.Write("<script>console.log('No projects found in database');</script>");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    string errorMsg = $"Error loading projects: {ex.Message}";
+                    Response.Write($"<script>alert('{errorMsg.Replace("'", "\\'")}');</script>");
+                    Response.Write($"<script>console.error('LoadProjects error: {errorMsg}');</script>");
+                }
+            }
+        }
+
+        protected void btnAdd_Click(object sender, EventArgs e)
+        {
+            string title = txtTitle.Text.Trim();
+            string description = txtDescription.Text.Trim();
+            string technologies = txtTech.Text.Trim();
+            string gitUrl = txtGitUrl.Text.Trim();
+            string imagePath = "";
+
+            // Debug: Show what we're trying to insert
+            string debugInfo = $"Debug Info:\\nTitle: {title}\\nDescription: {description}\\nTech: {technologies}\\nGit: {gitUrl}";
+            
+            // Validate required fields
+            if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(description))
+            {
+                Response.Write("<script>alert('Title and Description are required!');</script>");
+                return;
+            }
+
+            // Handle file upload
+            if (FileUpload1.HasFile)
+            {
+                try
+                {
+                    string fileName = Path.GetFileName(FileUpload1.FileName);
+                    string fileExtension = Path.GetExtension(fileName).ToLower();
+                    
+                    // Validate file type
+                    if (fileExtension == ".jpg" || fileExtension == ".jpeg" || fileExtension == ".png" || fileExtension == ".gif")
+                    {
+                        // Create uploads directory if it doesn't exist
+                        string uploadDir = Server.MapPath("~/Uploads/");
+                        if (!Directory.Exists(uploadDir))
+                        {
+                            Directory.CreateDirectory(uploadDir);
+                        }
+                        
+                        // Create unique filename to prevent conflicts
+                        string uniqueFileName = Guid.NewGuid().ToString() + fileExtension;
+                        string filePath = uploadDir + uniqueFileName;
+                        
+                        FileUpload1.SaveAs(filePath);
+                        imagePath = "Uploads/" + uniqueFileName;
+                    }
+                    else
+                    {
+                        Response.Write("<script>alert('Please select a valid image file (jpg, jpeg, png, gif)!');</script>");
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Response.Write("<script>alert('Error uploading file: " + ex.Message.Replace("'", "\\'") + "');</script>");
+                    return;
+                }
+            }
+            else
+            {
+                // Set default image if no file uploaded
+                imagePath = "default-project.png";
+            }
+
+            debugInfo += $"\\nImage Path: {imagePath}";
+
+            // Insert into database with correct column name
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    
+                    // Debug: Test connection
+                    Response.Write("<script>console.log('Database connection successful');</script>");
+                    
+                    // Use correct column name: ImagePath (not ImagrPath)
+                    string query = "INSERT INTO Projects (Title, Description, ImagePath, TechUsed, GitUrl) VALUES (@title, @description, @imagePath, @techUsed, @gitUrl)";
+                    
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.Parameters.AddWithValue("@title", title);
+                    cmd.Parameters.AddWithValue("@description", description);
+                    cmd.Parameters.AddWithValue("@imagePath", imagePath);
+                    cmd.Parameters.AddWithValue("@techUsed", technologies);
+                    cmd.Parameters.AddWithValue("@gitUrl", gitUrl);
+
+                    // Debug: Show the query being executed
+                    Response.Write($"<script>console.log('Executing query: {query}');</script>");
+
+                    int result = cmd.ExecuteNonQuery();
+                    
+                    // Debug: Show result
+                    Response.Write($"<script>console.log('Insert result: {result} rows affected');</script>");
+                    
+                    if (result > 0)
+                    {
+                        // Verify the record was actually inserted
+                        string verifyQuery = "SELECT COUNT(*) FROM Projects WHERE Title = @title";
+                        SqlCommand verifyCmd = new SqlCommand(verifyQuery, con);
+                        verifyCmd.Parameters.AddWithValue("@title", title);
+                        int count = (int)verifyCmd.ExecuteScalar();
+                        
+                        Response.Write($"<script>alert('SUCCESS!\\n\\nProject added successfully!\\n\\n{debugInfo}\\n\\nRecords with this title in database: {count}\\n\\nCheck your portfolio at Home.aspx to see it.');</script>");
+                        ClearForm();
+                        LoadProjects();
+                    }
+                    else
+                    {
+                        Response.Write($"<script>alert('FAILED!\\n\\nNo rows were affected.\\n\\n{debugInfo}');</script>");
+                    }
+                }
+                catch (SqlException sqlEx)
+                {
+                    string errorMsg = $"SQL ERROR:\\n\\nMessage: {sqlEx.Message}\\nNumber: {sqlEx.Number}\\nState: {sqlEx.State}\\n\\n{debugInfo}";
+                    Response.Write($"<script>alert('{errorMsg.Replace("'", "\\'")}');</script>");
+                }
+                catch (Exception ex)
+                {
+                    string errorMsg = $"GENERAL ERROR:\\n\\nMessage: {ex.Message}\\n\\n{debugInfo}";
+                    Response.Write($"<script>alert('{errorMsg.Replace("'", "\\'")}');</script>");
+                }
+            }
+        }
+
+        protected void gvProjects_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "EditProject")
+            {
+                int rowIndex = Convert.ToInt32(e.CommandArgument);
+                int projectId = Convert.ToInt32(gvProjects.DataKeys[rowIndex].Value);
+                LoadProjectForEdit(projectId);
+            }
+            else if (e.CommandName == "DeleteProject")
+            {
+                int rowIndex = Convert.ToInt32(e.CommandArgument);
+                GridViewRow row = gvProjects.Rows[rowIndex];
+                int id = Convert.ToInt32(gvProjects.DataKeys[rowIndex].Value);
+                DeleteProject(id);
+            }
+        }
+
+        private void LoadProjectForEdit(int projectId)
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    string query = "SELECT * FROM Projects WHERE Id = @id";
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.Parameters.AddWithValue("@id", projectId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        // Populate form fields
+                        txtTitle.Text = reader["Title"].ToString();
+                        txtDescription.Text = reader["Description"].ToString();
+                        txtTech.Text = reader["TechUsed"].ToString();
+                        txtGitUrl.Text = reader["GitUrl"].ToString();
+
+                        // Handle current image
+                        string imagePath = reader["ImagePath"].ToString();
+                        hdnCurrentImagePath.Value = imagePath;
+                        hdnEditingProjectId.Value = projectId.ToString();
+
+                        if (!string.IsNullOrEmpty(imagePath))
+                        {
+                            imgCurrentEdit.ImageUrl = imagePath;
+                            currentImageDiv.Visible = true;
+                        }
+
+                        // Switch to edit mode
+                        SwitchToEditMode();
+                    }
+                    reader.Close();
+                }
+                catch (Exception ex)
+                {
+                    Response.Write($"<script>alert('Error loading project for edit: {ex.Message.Replace("'", "\\'")}');</script>");
+                }
+            }
+        }
+
+        protected void btnUpdate_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(hdnEditingProjectId.Value))
+            {
+                int projectId = Convert.ToInt32(hdnEditingProjectId.Value);
+                string title = txtTitle.Text.Trim();
+                string description = txtDescription.Text.Trim();
+                string technologies = txtTech.Text.Trim();
+                string gitUrl = txtGitUrl.Text.Trim();
+                string imagePath = hdnCurrentImagePath.Value; // Keep current image by default
+
+                // Validate required fields
+                if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(description))
+                {
+                    Response.Write("<script>alert('Title and Description are required!');</script>");
+                    return;
+                }
+
+                // Handle file upload if new image selected
+                if (FileUpload1.HasFile)
+                {
+                    try
+                    {
+                        string fileName = Path.GetFileName(FileUpload1.FileName);
+                        string fileExtension = Path.GetExtension(fileName).ToLower();
+
+                        if (fileExtension == ".jpg" || fileExtension == ".jpeg" || fileExtension == ".png" || fileExtension == ".gif")
+                        {
+                            string uploadDir = Server.MapPath("~/Uploads/");
+                            if (!Directory.Exists(uploadDir))
+                            {
+                                Directory.CreateDirectory(uploadDir);
+                            }
+
+                            string uniqueFileName = Guid.NewGuid().ToString() + fileExtension;
+                            string filePath = uploadDir + uniqueFileName;
+
+                            FileUpload1.SaveAs(filePath);
+
+                            // Delete old image file
+                            if (!string.IsNullOrEmpty(imagePath))
+                            {
+                                string oldPhysicalPath = Server.MapPath("~/" + imagePath);
+                                if (File.Exists(oldPhysicalPath))
+                                {
+                                    File.Delete(oldPhysicalPath);
+                                }
+                            }
+
+                            imagePath = "Uploads/" + uniqueFileName;
+                        }
+                        else
+                        {
+                            Response.Write("<script>alert('Please select a valid image file (jpg, jpeg, png, gif)!');</script>");
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Response.Write("<script>alert('Error uploading file: " + ex.Message.Replace("'", "\\'") + "');</script>");
+                        return;
+                    }
+                }
+
+                // Update database
+                using (SqlConnection con = new SqlConnection(cs))
+                {
+                    try
+                    {
+                        con.Open();
+                        string query = @"UPDATE Projects SET 
+                                       Title = @title, 
+                                       Description = @description, 
+                                       ImagePath = @imagePath, 
+                                       TechUsed = @techUsed, 
+                                       GitUrl = @gitUrl 
+                                       WHERE Id = @id";
+
+                        SqlCommand cmd = new SqlCommand(query, con);
+                        cmd.Parameters.AddWithValue("@title", title);
+                        cmd.Parameters.AddWithValue("@description", description);
+                        cmd.Parameters.AddWithValue("@imagePath", imagePath);
+                        cmd.Parameters.AddWithValue("@techUsed", technologies);
+                        cmd.Parameters.AddWithValue("@gitUrl", gitUrl);
+                        cmd.Parameters.AddWithValue("@id", projectId);
+
+                        int result = cmd.ExecuteNonQuery();
+                        if (result > 0)
+                        {
+                            Response.Write("<script>alert('Project updated successfully!');</script>");
+                            SwitchToAddMode();
+                            ClearForm();
+                            LoadProjects();
+                        }
+                        else
+                        {
+                            Response.Write("<script>alert('Failed to update project!');</script>");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Response.Write("<script>alert('Error updating project: " + ex.Message.Replace("'", "\\'") + "');</script>");
+                    }
+                }
+            }
+        }
+
+        protected void btnCancel_Click(object sender, EventArgs e)
+        {
+            SwitchToAddMode();
+            ClearForm();
+        }
+
+        private void SwitchToEditMode()
+        {
+            formTitle.InnerText = "Edit Project";
+            btnAdd.Visible = false;
+            btnUpdate.Visible = true;
+            btnCancel.Visible = true;
+        }
+
+        private void SwitchToAddMode()
+        {
+            formTitle.InnerText = "Add New Project";
+            btnAdd.Visible = true;
+            btnUpdate.Visible = false;
+            btnCancel.Visible = false;
+            currentImageDiv.Visible = false;
+            hdnEditingProjectId.Value = "";
+            hdnCurrentImagePath.Value = "";
+        }
+
+        private void DeleteProject(int projectId)
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    
+                    // Use correct column name ImagePath
+                    string getImageQuery = "SELECT ImagePath FROM Projects WHERE Id = @id";
+                    SqlCommand getCmd = new SqlCommand(getImageQuery, con);
+                    getCmd.Parameters.AddWithValue("@id", projectId);
+                    string imagePath = getCmd.ExecuteScalar()?.ToString();
+                    
+                    // Delete from database
+                    SqlCommand cmd = new SqlCommand("DELETE FROM Projects WHERE Id=@id", con);
+                    cmd.Parameters.AddWithValue("@id", projectId);
+
+                    int result = cmd.ExecuteNonQuery();
+                    if (result > 0)
+                    {
+                        // Delete image file if exists
+                        if (!string.IsNullOrEmpty(imagePath))
+                        {
+                            string physicalPath = Server.MapPath("~/" + imagePath);
+                            if (File.Exists(physicalPath))
+                            {
+                                File.Delete(physicalPath);
+                            }
+                        }
+                        
+                        Response.Write("<script>alert('Project deleted successfully!');</script>");
+                        LoadProjects();
+                    }
+                    else
+                    {
+                        Response.Write("<script>alert('Failed to delete project!');</script>");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Response.Write("<script>alert('Error: " + ex.Message.Replace("'", "\\'") + "');</script>");
+                }
+            }
+        }
+
+        private void ClearForm()
+        {
+            txtTitle.Text = "";
+            txtDescription.Text = "";
+            txtTech.Text = "";
+            txtGitUrl.Text = "";
+            hdnEditingProjectId.Value = "";
+            hdnCurrentImagePath.Value = "";
+            currentImageDiv.Visible = false;
+        }
+    }
+}

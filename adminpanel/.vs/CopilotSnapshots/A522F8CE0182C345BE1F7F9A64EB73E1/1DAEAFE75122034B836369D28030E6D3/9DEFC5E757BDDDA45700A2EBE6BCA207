@@ -1,0 +1,416 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Data;
+using System.IO;
+
+namespace adminpanel
+{
+    public partial class Experience : System.Web.UI.Page
+    {
+        string cs = ConfigurationManager.ConnectionStrings["AdminPanelDB"].ConnectionString;
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            // Check if user is authenticated
+            if (Session["AdminUser"] == null)
+            {
+                Response.Redirect("Login.aspx");
+            }
+
+            if (!IsPostBack)
+            {
+                LoadExperience();
+            }
+        }
+
+        private void LoadExperience()
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    // Use only columns that exist in your table
+                    string query = "SELECT Id, Title, Company, StartDate, EndDate, Description, ImagePath FROM Experience ORDER BY StartDate DESC";
+                    SqlDataAdapter da = new SqlDataAdapter(query, con);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    
+                    // Add Duration column for display (calculated from dates)
+                    dt.Columns.Add("Duration", typeof(string));
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        DateTime? startDate = row["StartDate"] != DBNull.Value ? (DateTime?)row["StartDate"] : null;
+                        DateTime? endDate = row["EndDate"] != DBNull.Value ? (DateTime?)row["EndDate"] : null;
+                        
+                        if (startDate.HasValue)
+                        {
+                            string duration = startDate.Value.ToString("MMM yyyy");
+                            if (endDate.HasValue)
+                            {
+                                duration += " - " + endDate.Value.ToString("MMM yyyy");
+                            }
+                            else
+                            {
+                                duration += " - Present";
+                            }
+                            row["Duration"] = duration;
+                        }
+                        else
+                        {
+                            row["Duration"] = "Not specified";
+                        }
+                    }
+                    
+                    gvExperience.DataSource = dt;
+                    gvExperience.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    ShowMessage("Error loading experience: " + ex.Message, "danger");
+                }
+            }
+        }
+
+        protected void btnAddExperience_Click(object sender, EventArgs e)
+        {
+            if (Page.IsValid)
+            {
+                string title = txtTitle.Text.Trim();
+                string company = txtCompany.Text.Trim();
+                string duration = txtDuration.Text.Trim();
+                string description = txtDescription.Text.Trim();
+                DateTime? startDate = string.IsNullOrEmpty(txtStartDate.Text) ? (DateTime?)null : Convert.ToDateTime(txtStartDate.Text);
+                DateTime? endDate = string.IsNullOrEmpty(txtEndDate.Text) ? (DateTime?)null : Convert.ToDateTime(txtEndDate.Text);
+                string imagePath = "";
+
+                // Handle image upload
+                if (FileUpload1.HasFile)
+                {
+                    imagePath = HandleImageUpload();
+                    if (imagePath == null) return; // Error occurred during upload
+                }
+
+                using (SqlConnection con = new SqlConnection(cs))
+                {
+                    try
+                    {
+                        con.Open();
+                        string query = @"INSERT INTO Experience (Title, Company, Duration, StartDate, EndDate, Description, ImagePath, IsActive, CreatedDate) 
+                                       VALUES (@title, @company, @duration, @startDate, @endDate, @description, @imagePath, 1, GETDATE())";
+                        SqlCommand cmd = new SqlCommand(query, con);
+                        cmd.Parameters.AddWithValue("@title", title);
+                        cmd.Parameters.AddWithValue("@company", company);
+                        cmd.Parameters.AddWithValue("@duration", duration);
+                        cmd.Parameters.AddWithValue("@startDate", (object)startDate ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("@endDate", (object)endDate ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("@description", description);
+                        cmd.Parameters.AddWithValue("@imagePath", imagePath);
+
+                        int result = cmd.ExecuteNonQuery();
+                        if (result > 0)
+                        {
+                            ShowMessage("Experience added successfully!", "success");
+                            ClearForm();
+                            LoadExperience();
+                        }
+                        else
+                        {
+                            ShowMessage("Failed to add experience!", "danger");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowMessage("Error: " + ex.Message, "danger");
+                    }
+                }
+            }
+        }
+
+        protected void btnUpdateExperience_Click(object sender, EventArgs e)
+        {
+            if (Page.IsValid && !string.IsNullOrEmpty(hdnExperienceId.Value))
+            {
+                int experienceId = Convert.ToInt32(hdnExperienceId.Value);
+                string title = txtTitle.Text.Trim();
+                string company = txtCompany.Text.Trim();
+                string duration = txtDuration.Text.Trim();
+                string description = txtDescription.Text.Trim();
+                DateTime? startDate = string.IsNullOrEmpty(txtStartDate.Text) ? (DateTime?)null : Convert.ToDateTime(txtStartDate.Text);
+                DateTime? endDate = string.IsNullOrEmpty(txtEndDate.Text) ? (DateTime?)null : Convert.ToDateTime(txtEndDate.Text);
+                string imagePath = hdnCurrentImagePath.Value;
+
+                // Handle image upload
+                if (FileUpload1.HasFile)
+                {
+                    string newImagePath = HandleImageUpload();
+                    if (newImagePath != null)
+                    {
+                        // Delete old image
+                        if (!string.IsNullOrEmpty(imagePath))
+                        {
+                            DeleteImageFile(imagePath);
+                        }
+                        imagePath = newImagePath;
+                    }
+                    else
+                    {
+                        return; // Error occurred during upload
+                    }
+                }
+
+                using (SqlConnection con = new SqlConnection(cs))
+                {
+                    try
+                    {
+                        con.Open();
+                        string query = @"UPDATE Experience SET Title = @title, Company = @company, Duration = @duration, 
+                                       StartDate = @startDate, EndDate = @endDate, Description = @description, ImagePath = @imagePath 
+                                       WHERE Id = @id";
+                        SqlCommand cmd = new SqlCommand(query, con);
+                        cmd.Parameters.AddWithValue("@title", title);
+                        cmd.Parameters.AddWithValue("@company", company);
+                        cmd.Parameters.AddWithValue("@duration", duration);
+                        cmd.Parameters.AddWithValue("@startDate", (object)startDate ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("@endDate", (object)endDate ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("@description", description);
+                        cmd.Parameters.AddWithValue("@imagePath", imagePath);
+                        cmd.Parameters.AddWithValue("@id", experienceId);
+
+                        int result = cmd.ExecuteNonQuery();
+                        if (result > 0)
+                        {
+                            ShowMessage("Experience updated successfully!", "success");
+                            ClearForm();
+                            LoadExperience();
+                            SwitchToAddMode();
+                        }
+                        else
+                        {
+                            ShowMessage("Failed to update experience!", "danger");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowMessage("Error: " + ex.Message, "danger");
+                    }
+                }
+            }
+        }
+
+        protected void btnCancelEdit_Click(object sender, EventArgs e)
+        {
+            ClearForm();
+            SwitchToAddMode();
+        }
+
+        protected void gvExperience_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            int experienceId = Convert.ToInt32(e.CommandArgument);
+
+            if (e.CommandName == "EditExperience")
+            {
+                LoadExperienceForEdit(experienceId);
+            }
+            else if (e.CommandName == "DeleteExperience")
+            {
+                DeleteExperience(experienceId);
+            }
+        }
+
+        private void LoadExperienceForEdit(int experienceId)
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    string query = "SELECT * FROM Experience WHERE Id = @id";
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.Parameters.AddWithValue("@id", experienceId);
+                    
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        hdnExperienceId.Value = reader["Id"].ToString();
+                        txtTitle.Text = reader["Title"].ToString();
+                        txtCompany.Text = reader["Company"].ToString();
+                        txtDuration.Text = reader["Duration"].ToString();
+                        txtDescription.Text = reader["Description"].ToString();
+                        
+                        if (reader["StartDate"] != DBNull.Value)
+                            txtStartDate.Text = Convert.ToDateTime(reader["StartDate"]).ToString("yyyy-MM-dd");
+                        
+                        if (reader["EndDate"] != DBNull.Value)
+                            txtEndDate.Text = Convert.ToDateTime(reader["EndDate"]).ToString("yyyy-MM-dd");
+                        
+                        string imagePath = reader["ImagePath"].ToString();
+                        hdnCurrentImagePath.Value = imagePath;
+                        
+                        if (!string.IsNullOrEmpty(imagePath))
+                        {
+                            imgCurrent.ImageUrl = imagePath;
+                            currentImageDiv.Visible = true;
+                        }
+                        
+                        SwitchToEditMode();
+                    }
+                    reader.Close();
+                }
+                catch (Exception ex)
+                {
+                    ShowMessage("Error loading experience for edit: " + ex.Message, "danger");
+                }
+            }
+        }
+
+        private void DeleteExperience(int experienceId)
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    
+                    // Get image path before deleting
+                    string getImageQuery = "SELECT ImagePath FROM Experience WHERE Id = @id";
+                    SqlCommand getCmd = new SqlCommand(getImageQuery, con);
+                    getCmd.Parameters.AddWithValue("@id", experienceId);
+                    string imagePath = getCmd.ExecuteScalar()?.ToString();
+                    
+                    // Soft delete - mark as inactive
+                    string query = "UPDATE Experience SET IsActive = 0 WHERE Id = @id";
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.Parameters.AddWithValue("@id", experienceId);
+
+                    int result = cmd.ExecuteNonQuery();
+                    if (result > 0)
+                    {
+                        // Delete image file
+                        if (!string.IsNullOrEmpty(imagePath))
+                        {
+                            DeleteImageFile(imagePath);
+                        }
+                        
+                        ShowMessage("Experience deleted successfully!", "success");
+                        LoadExperience();
+                    }
+                    else
+                    {
+                        ShowMessage("Failed to delete experience!", "danger");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ShowMessage("Error: " + ex.Message, "danger");
+                }
+            }
+        }
+
+        private string HandleImageUpload()
+        {
+            try
+            {
+                string fileName = Path.GetFileName(FileUpload1.FileName);
+                string fileExtension = Path.GetExtension(fileName).ToLower();
+                
+                // Validate file type
+                if (fileExtension == ".jpg" || fileExtension == ".jpeg" || fileExtension == ".png" || fileExtension == ".gif")
+                {
+                    // Create uploads directory if it doesn't exist
+                    string uploadDir = Server.MapPath("~/Uploads/");
+                    if (!Directory.Exists(uploadDir))
+                    {
+                        Directory.CreateDirectory(uploadDir);
+                    }
+                    
+                    // Create unique filename
+                    string uniqueFileName = Guid.NewGuid().ToString() + fileExtension;
+                    string filePath = uploadDir + uniqueFileName;
+                    
+                    FileUpload1.SaveAs(filePath);
+                    return "/Uploads/" + uniqueFileName;
+                }
+                else
+                {
+                    ShowMessage("Please select a valid image file (jpg, jpeg, png, gif)!", "danger");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowMessage("Error uploading file: " + ex.Message, "danger");
+                return null;
+            }
+        }
+
+        private void DeleteImageFile(string imagePath)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(imagePath))
+                {
+                    string physicalPath = Server.MapPath("~" + imagePath);
+                    if (File.Exists(physicalPath))
+                    {
+                        File.Delete(physicalPath);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log error but don't show to user as it's not critical
+            }
+        }
+
+        private void ClearForm()
+        {
+            txtTitle.Text = "";
+            txtCompany.Text = "";
+            txtDuration.Text = "";
+            txtStartDate.Text = "";
+            txtEndDate.Text = "";
+            txtDescription.Text = "";
+            hdnExperienceId.Value = "";
+            hdnCurrentImagePath.Value = "";
+            currentImageDiv.Visible = false;
+        }
+
+        private void SwitchToEditMode()
+        {
+            btnAddExperience.Visible = false;
+            btnUpdateExperience.Visible = true;
+            btnCancelEdit.Visible = true;
+        }
+
+        private void SwitchToAddMode()
+        {
+            btnAddExperience.Visible = true;
+            btnUpdateExperience.Visible = false;
+            btnCancelEdit.Visible = false;
+        }
+
+        private void ShowMessage(string message, string type)
+        {
+            string alertClass = type == "success" ? "alert-success" : "alert-danger";
+            string script = $@"
+                var alertDiv = document.createElement('div');
+                alertDiv.className = 'alert {alertClass} alert-dismissible fade show';
+                alertDiv.innerHTML = '{message}<button type=""button"" class=""btn-close"" data-bs-dismiss=""alert""></button>';
+                document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.container').firstChild);
+                setTimeout(function() {{
+                    if (alertDiv.parentNode) {{
+                        alertDiv.parentNode.removeChild(alertDiv);
+                    }}
+                }}, 5000);
+            ";
+            ClientScript.RegisterStartupScript(this.GetType(), "ShowMessage", script, true);
+        }
+    }
+}

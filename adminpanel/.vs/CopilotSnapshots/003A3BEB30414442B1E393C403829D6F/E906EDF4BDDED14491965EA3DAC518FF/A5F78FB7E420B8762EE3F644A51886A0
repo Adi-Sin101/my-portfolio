@@ -1,0 +1,106 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+using System.Configuration;
+
+namespace adminpanel
+{
+    public partial class Login : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            // If already logged in, redirect to dashboard
+            if (Session["AdminUser"] != null)
+            {
+                Response.Redirect("Default.aspx");  // Fixed: Go to admin dashboard
+            }
+        }
+        protected void BtnLogin_Click(object sender, EventArgs e)
+        {
+            string username = txtUsername.Text;
+            string password = txtPassword.Text;
+            string cs = ConfigurationManager.ConnectionStrings["AdminPanelDB"].ConnectionString;
+
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    
+                    // First, let's check if AdminUser table exists and what's in it
+                    string checkTableQuery = @"
+                        IF EXISTS (SELECT * FROM sysobjects WHERE name='AdminUser' AND xtype='U')
+                            SELECT 'AdminUser table exists' as TableStatus
+                        ELSE IF EXISTS (SELECT * FROM sysobjects WHERE name='AdminUsers' AND xtype='U')
+                            SELECT 'AdminUsers table exists' as TableStatus
+                        ELSE
+                            SELECT 'No admin table found' as TableStatus";
+                    
+                    SqlCommand checkCmd = new SqlCommand(checkTableQuery, con);
+                    string tableStatus = checkCmd.ExecuteScalar()?.ToString();
+                    
+                    string actualQuery = "";
+                    
+                    // Use the correct table name based on what exists
+                    if (tableStatus == "AdminUser table exists")
+                    {
+                        actualQuery = "SELECT COUNT(*) FROM AdminUser WHERE Username=@u AND PasswordHash=@p";
+                    }
+                    else if (tableStatus == "AdminUsers table exists")
+                    {
+                        actualQuery = "SELECT COUNT(*) FROM AdminUsers WHERE Username=@u AND Password=@p";
+                    }
+                    else
+                    {
+                        lblMessage.Text = "Database not properly set up. Please run the SQL setup script.";
+                        return;
+                    }
+                    
+                    SqlCommand cmd = new SqlCommand(actualQuery, con);
+                    cmd.Parameters.AddWithValue("@u", username);
+                    cmd.Parameters.AddWithValue("@p", password);
+
+                    int count = (int)cmd.ExecuteScalar();
+                    if (count > 0)
+                    {
+                        Session["AdminUser"] = username;
+                        Response.Redirect("Default.aspx");
+                    }
+                    else
+                    {
+                        // Let's check what users actually exist
+                        string listUsersQuery = "";
+                        if (tableStatus == "AdminUser table exists")
+                        {
+                            listUsersQuery = "SELECT Username, PasswordHash FROM AdminUser";
+                        }
+                        else
+                        {
+                            listUsersQuery = "SELECT Username, Password FROM AdminUsers";
+                        }
+                        
+                        SqlCommand listCmd = new SqlCommand(listUsersQuery, con);
+                        SqlDataReader reader = listCmd.ExecuteReader();
+                        
+                        string userList = "Available users: ";
+                        while (reader.Read())
+                        {
+                            userList += reader[0].ToString() + "/" + reader[1].ToString() + " ";
+                        }
+                        reader.Close();
+                        
+                        lblMessage.Text = "Invalid login! " + userList;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    lblMessage.Text = "Database error: " + ex.Message;
+                }
+            }
+        }
+    }
+}

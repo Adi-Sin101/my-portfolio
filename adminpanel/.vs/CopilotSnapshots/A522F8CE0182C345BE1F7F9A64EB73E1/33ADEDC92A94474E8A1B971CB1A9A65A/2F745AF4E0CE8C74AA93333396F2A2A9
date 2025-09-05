@@ -1,0 +1,209 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Text;
+
+namespace adminpanel
+{
+    public partial class TestDB : System.Web.UI.Page
+    {
+        string cs = ConfigurationManager.ConnectionStrings["AdminPanelDB"].ConnectionString;
+
+        protected TextBox txtTestTitle;
+        protected TextBox txtTestDesc;
+        protected System.Web.UI.HtmlControls.HtmlGenericControl results;
+        protected System.Web.UI.HtmlControls.HtmlGenericControl testResults;
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void btnTestDB_Click(object sender, EventArgs e)
+        {
+            StringBuilder result = new StringBuilder();
+            
+            try
+            {
+                using (SqlConnection con = new SqlConnection(cs))
+                {
+                    con.Open();
+                    result.Append("<div class='result success'><strong>✓ Database Connection: SUCCESS</strong><br/>");
+                    result.Append($"Connection String: {cs}<br/>");
+                    result.Append($"Database: {con.Database}<br/>");
+                    result.Append($"Server: {con.DataSource}</div>");
+
+                    // Check if Projects table exists
+                    string checkTableQuery = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Projects'";
+                    SqlCommand checkCmd = new SqlCommand(checkTableQuery, con);
+                    int tableExists = (int)checkCmd.ExecuteScalar();
+                    
+                    if (tableExists > 0)
+                    {
+                        result.Append("<div class='result success'><strong>✓ Projects Table: EXISTS</strong></div>");
+                        
+                        // Check table structure - looking for your specific columns
+                        string structureQuery = @"SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE 
+                                                FROM INFORMATION_SCHEMA.COLUMNS 
+                                                WHERE TABLE_NAME = 'Projects' 
+                                                ORDER BY ORDINAL_POSITION";
+                        SqlCommand structCmd = new SqlCommand(structureQuery, con);
+                        SqlDataReader reader = structCmd.ExecuteReader();
+                        
+                        result.Append("<div class='result'><strong>Your Table Structure:</strong><br/>");
+                        List<string> foundColumns = new List<string>();
+                        while (reader.Read())
+                        {
+                            string colName = reader["COLUMN_NAME"].ToString();
+                            foundColumns.Add(colName);
+                            result.Append($"• {colName} ({reader["DATA_TYPE"]}) - Nullable: {reader["IS_NULLABLE"]}<br/>");
+                        }
+                        reader.Close();
+                        result.Append("</div>");
+                        
+                        // Verify expected columns
+                        string[] expectedColumns = { "Id", "Title", "Description", "ImagePath", "TechUsed", "GitUrl" };
+                        result.Append("<div class='result'><strong>Column Check:</strong><br/>");
+                        foreach (string col in expectedColumns)
+                        {
+                            if (foundColumns.Contains(col))
+                                result.Append($"✓ {col} - Found<br/>");
+                            else
+                                result.Append($"✗ {col} - Missing<br/>");
+                        }
+                        result.Append("</div>");
+                        
+                        // Check existing data
+                        string countQuery = "SELECT COUNT(*) FROM Projects";
+                        SqlCommand countCmd = new SqlCommand(countQuery, con);
+                        int recordCount = (int)countCmd.ExecuteScalar();
+                        result.Append($"<div class='result'><strong>Records in Projects table: {recordCount}</strong></div>");
+                        
+                        if (recordCount > 0)
+                        {
+                            string dataQuery = "SELECT TOP 5 Id, Title, Description, ImagePath, TechUsed, GitUrl FROM Projects ORDER BY Id DESC";
+                            SqlCommand dataCmd = new SqlCommand(dataQuery, con);
+                            SqlDataReader dataReader = dataCmd.ExecuteReader();
+                            
+                            result.Append("<div class='result'><strong>Recent Projects:</strong><br/>");
+                            while (dataReader.Read())
+                            {
+                                result.Append($"ID: {dataReader["Id"]}, Title: {dataReader["Title"]}<br/>");
+                                result.Append($"&nbsp;&nbsp;Image: {dataReader["ImagePath"]}<br/>");
+                                result.Append($"&nbsp;&nbsp;Tech: {dataReader["TechUsed"]}<br/>");
+                                result.Append($"&nbsp;&nbsp;Git: {dataReader["GitUrl"]}<br/><br/>");
+                            }
+                            dataReader.Close();
+                            result.Append("</div>");
+                        }
+                        else
+                        {
+                            result.Append("<div class='result'><strong>No projects found. Try adding a test project below.</strong></div>");
+                        }
+                    }
+                    else
+                    {
+                        result.Append("<div class='result error'><strong>✗ Projects Table: DOES NOT EXIST</strong></div>");
+                        
+                        // Show available tables
+                        string tablesQuery = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'";
+                        SqlCommand tablesCmd = new SqlCommand(tablesQuery, con);
+                        SqlDataReader tablesReader = tablesCmd.ExecuteReader();
+                        
+                        result.Append("<div class='result'><strong>Available Tables:</strong><br/>");
+                        while (tablesReader.Read())
+                        {
+                            result.Append($"• {tablesReader["TABLE_NAME"]}<br/>");
+                        }
+                        tablesReader.Close();
+                        result.Append("</div>");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Append($"<div class='result error'><strong>✗ Database Error:</strong><br/>{ex.Message}</div>");
+            }
+            
+            results.InnerHtml = result.ToString();
+        }
+
+        protected void btnAddTest_Click(object sender, EventArgs e)
+        {
+            string title = txtTestTitle.Text.Trim();
+            string description = txtTestDesc.Text.Trim();
+            
+            if (string.IsNullOrEmpty(title)) title = "Test Project " + DateTime.Now.ToString("HHmmss");
+            if (string.IsNullOrEmpty(description)) description = "Test description added at " + DateTime.Now.ToString();
+            
+            StringBuilder result = new StringBuilder();
+            
+            try
+            {
+                using (SqlConnection con = new SqlConnection(cs))
+                {
+                    con.Open();
+                    
+                    // Use your exact column names: Id, Title, Description, ImagrPath, TechUsed, GitUrl
+                    string insertQuery = @"INSERT INTO Projects (Title, Description, ImagrPath, TechUsed, GitUrl) 
+                                         VALUES (@title, @desc, @img, @tech, @git)";
+                    SqlCommand cmd = new SqlCommand(insertQuery, con);
+                    cmd.Parameters.AddWithValue("@title", title);
+                    cmd.Parameters.AddWithValue("@desc", description);
+                    cmd.Parameters.AddWithValue("@img", "test-project.png");
+                    cmd.Parameters.AddWithValue("@tech", "Test, Debug, ASP.NET");
+                    cmd.Parameters.AddWithValue("@git", "https://github.com/test/test-project");
+                    
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    
+                    if (rowsAffected > 0)
+                    {
+                        result.Append("<div class='result success'><strong>✓ Test Project Added Successfully!</strong></div>");
+                        
+                        // Get the new record using your exact column names
+                        string selectQuery = "SELECT TOP 1 Id, Title, Description, ImagrPath, TechUsed, GitUrl FROM Projects ORDER BY Id DESC";
+                        SqlCommand selectCmd = new SqlCommand(selectQuery, con);
+                        SqlDataReader reader = selectCmd.ExecuteReader();
+                        
+                        if (reader.Read())
+                        {
+                            result.Append("<div class='result'><strong>New Record:</strong><br/>");
+                            result.Append($"ID: {reader["Id"]}<br/>");
+                            result.Append($"Title: {reader["Title"]}<br/>");
+                            result.Append($"Description: {reader["Description"]}<br/>");
+                            result.Append($"Image Path: {reader["ImagrPath"]}<br/>");
+                            result.Append($"Tech Used: {reader["TechUsed"]}<br/>");
+                            result.Append($"Git URL: {reader["GitUrl"]}</div>");
+                        }
+                        reader.Close();
+                        
+                        // Check total count
+                        string countQuery = "SELECT COUNT(*) FROM Projects";
+                        SqlCommand countCmd = new SqlCommand(countQuery, con);
+                        int totalCount = (int)countCmd.ExecuteScalar();
+                        result.Append($"<div class='result'><strong>Total Projects in Database: {totalCount}</strong></div>");
+                    }
+                    else
+                    {
+                        result.Append("<div class='result error'><strong>✗ Failed to add test project</strong></div>");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Append($"<div class='result error'><strong>✗ Error adding test project:</strong><br/>{ex.Message}</div>");
+            }
+            
+            testResults.InnerHtml = result.ToString();
+            
+            // Clear form
+            txtTestTitle.Text = "";
+            txtTestDesc.Text = "";
+        }
+    }
+}

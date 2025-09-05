@@ -1,0 +1,203 @@
+// Portfolio JavaScript functionality - Integrated from VS Code with CSS animations
+const roles = [
+    "Web Developer",
+    "App Developer", 
+    "Programmer",
+    "Tech-Business Case Competitor",
+    "CS Student"
+];
+
+let index = 0;
+let roleElement;
+
+function rotaterole() {
+    if (!roleElement) return;
+    
+    roleElement.classList.add("fade-out");
+
+    setTimeout(() => {
+        roleElement.textContent = roles[index];
+        roleElement.classList.remove("fade-out");
+        index = (index + 1) % roles.length;
+    }, 500);
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Initialize role rotation
+    roleElement = document.getElementById("role-text");
+    if (roleElement) {
+        setInterval(rotaterole, 2500);
+    }
+
+    // Skills progress bar animation
+    const skillsObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const fills = entry.target.querySelectorAll(".progress-fill");
+                fills.forEach(fill => {
+                    const percentage = fill.getAttribute("data-percentage");
+                    if (percentage) {
+                        fill.style.width = "0%";
+                        setTimeout(() => {
+                            fill.style.width = percentage;
+                        }, 200);
+                    }
+                });
+            }
+        });
+    }, {
+        threshold: 0.3
+    });
+
+    // Observe skills section
+    const skillsSection = document.querySelector(".skills-section");
+    if (skillsSection) {
+        skillsObserver.observe(skillsSection);
+    }
+
+    // Fade-in scroll animation
+    const faders = document.querySelectorAll(".fade-in");
+    const fadeObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+            }
+        });
+    }, { threshold: 0.1 });
+
+    faders.forEach(fadeEl => fadeObserver.observe(fadeEl));
+
+    // Modal logic for experience cards
+    const modal = document.getElementById("experienceModal");
+    const modalImage = document.getElementById("modalImage");
+    const modalText = document.getElementById("modalText");
+    const closeModal = document.querySelector(".close-modal");
+
+    if (modal && modalImage && modalText && closeModal) {
+        document.querySelectorAll(".experience-card").forEach(card => {
+            card.addEventListener("click", () => {
+                const img = card.querySelector("img");
+                const title = card.querySelector("h4");
+                const company = card.querySelector(".company");
+                const desc = card.querySelector("p:not(.company)");
+
+                if (img && title && company && desc) {
+                    modalImage.src = img.src;
+                    modalText.innerHTML = `<h3>${title.textContent}</h3><p><strong>${company.textContent}</strong></p><p>${desc.textContent}</p>`;
+                    modal.style.display = "block";
+                }
+            });
+        });
+
+        closeModal.addEventListener("click", () => {
+            modal.style.display = "none";
+        });
+
+        window.addEventListener("click", e => {
+            if (e.target === modal) modal.style.display = "none";
+        });
+
+        // Close modal with Escape key
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape" && modal.style.display === "block") {
+                modal.style.display = "none";
+            }
+        });
+    }
+
+    // Smooth scrolling for navigation links
+    const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetSection = document.querySelector(targetId);
+            
+            if (targetSection) {
+                // Account for fixed navbar height
+                const offsetTop = targetSection.offsetTop - 100;
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // Add subtle parallax effect to hero section
+    window.addEventListener('scroll', function() {
+        const scrolled = window.pageYOffset;
+        const heroSection = document.querySelector('.hero-section');
+        
+        if (heroSection) {
+            const rate = scrolled * -0.5;
+            heroSection.style.transform = `translateY(${rate}px)`;
+        }
+    });
+
+    // Animate skill icons on load
+    const skillIcons = document.querySelectorAll('.skill-icon');
+    skillIcons.forEach((icon, index) => {
+        icon.style.opacity = '0';
+        icon.style.transform = 'scale(0.8)';
+        
+        setTimeout(() => {
+            icon.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            icon.style.opacity = '1';
+            icon.style.transform = 'scale(1)';
+        }, index * 100);
+    });
+
+    // Add hover effects to project and experience cards
+    const cards = document.querySelectorAll('.project-card, .experience-card');
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-18px) scale(1.06)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+
+    // Animate contact boxes on scroll
+    const contactBoxes = document.querySelectorAll('.contact-box');
+    const contactObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, index * 100);
+            }
+        });
+    }, { threshold: 0.3 });
+
+    contactBoxes.forEach(box => {
+        box.style.opacity = '0';
+        box.style.transform = 'translateY(30px)';
+        box.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        contactObserver.observe(box);
+    });
+
+    // Add typing effect to hero title (optional enhancement)
+    const heroTitle = document.querySelector('.hero-text h1 .highlight');
+    if (heroTitle) {
+        const text = heroTitle.textContent;
+        heroTitle.textContent = '';
+        
+        let i = 0;
+        function typeWriter() {
+            if (i < text.length) {
+                heroTitle.textContent += text.charAt(i);
+                i++;
+                setTimeout(typeWriter, 100);
+            }
+        }
+        
+        // Start typing effect after a brief delay
+        setTimeout(typeWriter, 1000);
+    }
+});
+
+

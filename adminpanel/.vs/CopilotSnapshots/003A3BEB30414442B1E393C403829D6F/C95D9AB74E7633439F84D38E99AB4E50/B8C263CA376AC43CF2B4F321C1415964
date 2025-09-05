@@ -1,0 +1,126 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+using System.Configuration;
+
+namespace adminpanel
+{
+    public partial class Login : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            // If already logged in, redirect to dashboard
+            if (Session["AdminUser"] != null)
+            {
+                Response.Redirect("Default.aspx");
+            }
+        }
+        
+        protected void BtnLogin_Click(object sender, EventArgs e)
+        {
+            // Clear previous message
+            lblMessage.Visible = false;
+            lblMessage.Text = "";
+            
+            string username = txtUsername.Text.Trim();
+            string password = txtPassword.Text.Trim();
+            
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                ShowMessage("Please enter both username and password.", "danger");
+                return;
+            }
+
+            string cs = ConfigurationManager.ConnectionStrings["AdminPanelDB"].ConnectionString;
+
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    
+                    // Try AdminUser table first
+                    string query = "SELECT COUNT(*) FROM AdminUser WHERE Username=@u AND PasswordHash=@p";
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.Parameters.AddWithValue("@u", username);
+                    cmd.Parameters.AddWithValue("@p", password);
+
+                    int count = (int)cmd.ExecuteScalar();
+                    
+                    if (count > 0)
+                    {
+                        Session["AdminUser"] = username;
+                        Response.Redirect("Default.aspx");
+                        return;
+                    }
+                    else
+                    {
+                        // Try AdminUsers table if AdminUser fails
+                        try
+                        {
+                            query = "SELECT COUNT(*) FROM AdminUsers WHERE Username=@u AND Password=@p";
+                            cmd = new SqlCommand(query, con);
+                            cmd.Parameters.AddWithValue("@u", username);
+                            cmd.Parameters.AddWithValue("@p", password);
+                            
+                            count = (int)cmd.ExecuteScalar();
+                            
+                            if (count > 0)
+                            {
+                                Session["AdminUser"] = username;
+                                Response.Redirect("Default.aspx");
+                                return;
+                            }
+                        }
+                        catch
+                        {
+                            // AdminUsers table doesn't exist either
+                        }
+                    }
+                    
+                    ShowMessage("Invalid username or password!", "danger");
+                }
+                catch (SqlException sqlEx)
+                {
+                    if (sqlEx.Message.Contains("Invalid object name"))
+                    {
+                        ShowMessage("Database not set up properly. Please create the AdminUser table first.", "warning");
+                    }
+                    else
+                    {
+                        ShowMessage("Database error: " + sqlEx.Message, "danger");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ShowMessage("Connection error: " + ex.Message, "danger");
+                }
+            }
+        }
+        
+        private void ShowMessage(string message, string type)
+        {
+            lblMessage.Text = message;
+            lblMessage.Visible = true;
+            
+            // Add appropriate CSS class based on message type
+            switch (type)
+            {
+                case "success":
+                    lblMessage.CssClass = "alert alert-success";
+                    break;
+                case "warning":
+                    lblMessage.CssClass = "alert alert-warning";
+                    break;
+                case "danger":
+                default:
+                    lblMessage.CssClass = "alert alert-danger";
+                    break;
+            }
+        }
+    }
+}

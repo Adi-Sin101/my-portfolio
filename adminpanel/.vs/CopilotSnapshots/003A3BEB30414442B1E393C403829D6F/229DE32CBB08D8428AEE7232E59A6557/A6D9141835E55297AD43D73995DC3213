@@ -1,0 +1,146 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+using System.Configuration;
+
+namespace adminpanel
+{
+    public partial class Login : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            // If already logged in, redirect to dashboard
+            if (Session["AdminUser"] != null)
+            {
+                Response.Redirect("Default.aspx");
+            }
+        }
+        
+        protected void BtnLogin_Click(object sender, EventArgs e)
+        {
+            string username = txtUsername.Text.Trim();
+            string password = txtPassword.Text.Trim();
+            string cs = ConfigurationManager.ConnectionStrings["AdminPanelDB"].ConnectionString;
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                lblMessage.Text = "Please enter both username and password.";
+                return;
+            }
+
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    
+                    // Try AdminUsers table first (since you mentioned having this)
+                    string query = "";
+                    bool foundTable = false;
+                    
+                    // Check AdminUsers table
+                    try
+                    {
+                        query = "SELECT COUNT(*) FROM AdminUsers WHERE Username=@u AND Password=@p";
+                        SqlCommand testCmd = new SqlCommand(query, con);
+                        testCmd.Parameters.AddWithValue("@u", username);
+                        testCmd.Parameters.AddWithValue("@p", password);
+                        
+                        int count = (int)testCmd.ExecuteScalar();
+                        foundTable = true;
+                        
+                        if (count > 0)
+                        {
+                            Session["AdminUser"] = username;
+                            Response.Redirect("Default.aspx");
+                            return;
+                        }
+                    }
+                    catch
+                    {
+                        // AdminUsers table doesn't exist, try AdminUser
+                    }
+                    
+                    // Try AdminUser table
+                    if (!foundTable)
+                    {
+                        try
+                        {
+                            query = "SELECT COUNT(*) FROM AdminUser WHERE Username=@u AND PasswordHash=@p";
+                            SqlCommand testCmd = new SqlCommand(query, con);
+                            testCmd.Parameters.AddWithValue("@u", username);
+                            testCmd.Parameters.AddWithValue("@p", password);
+                            
+                            int count = (int)testCmd.ExecuteScalar();
+                            foundTable = true;
+                            
+                            if (count > 0)
+                            {
+                                Session["AdminUser"] = username;
+                                Response.Redirect("Default.aspx");
+                                return;
+                            }
+                        }
+                        catch
+                        {
+                            // AdminUser table doesn't exist either
+                        }
+                    }
+                    
+                    if (!foundTable)
+                    {
+                        lblMessage.Text = "Admin table not found. Please set up the database.";
+                        return;
+                    }
+                    
+                    // If we get here, login failed
+                    lblMessage.Text = "Invalid username or password!";
+                    
+                    // Debug: Show what users exist (remove this in production)
+                    try
+                    {
+                        string debugQuery = "";
+                        try
+                        {
+                            debugQuery = "SELECT Username, Password FROM AdminUsers";
+                            SqlCommand debugCmd = new SqlCommand(debugQuery, con);
+                            SqlDataReader reader = debugCmd.ExecuteReader();
+                            string users = "Available users: ";
+                            while (reader.Read())
+                            {
+                                users += "[" + reader[0].ToString() + "/" + reader[1].ToString() + "] ";
+                            }
+                            reader.Close();
+                            lblMessage.Text += " " + users;
+                        }
+                        catch
+                        {
+                            debugQuery = "SELECT Username, PasswordHash FROM AdminUser";
+                            SqlCommand debugCmd = new SqlCommand(debugQuery, con);
+                            SqlDataReader reader = debugCmd.ExecuteReader();
+                            string users = "Available users: ";
+                            while (reader.Read())
+                            {
+                                users += "[" + reader[0].ToString() + "/" + reader[1].ToString() + "] ";
+                            }
+                            reader.Close();
+                            lblMessage.Text += " " + users;
+                        }
+                    }
+                    catch (Exception debugEx)
+                    {
+                        lblMessage.Text += " Debug error: " + debugEx.Message;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    lblMessage.Text = "Database connection error: " + ex.Message;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,340 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Data;
+using System.IO;
+using System.Text;
+
+namespace adminpanel
+{
+    public partial class About : System.Web.UI.Page
+    {
+        string cs = ConfigurationManager.ConnectionStrings["AdminPanelDB"].ConnectionString;
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            // Check if user is authenticated
+            if (Session["AdminUser"] == null)
+            {
+                Response.Redirect("Login.aspx");
+            }
+
+            if (!IsPostBack)
+            {
+                LoadPersonalInfo();
+                LoadCurrentInfoPreview();
+            }
+        }
+
+        private void LoadPersonalInfo()
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    string query = "SELECT TOP 1 * FROM PersonalInfo WHERE IsActive = 1 ORDER BY CreatedDate DESC";
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    
+                    if (reader.Read())
+                    {
+                        hdnPersonalInfoId.Value = reader["Id"].ToString();
+                        txtFullName.Text = reader["FullName"].ToString();
+                        txtRole.Text = reader["Role"].ToString();
+                        txtEmail.Text = reader["Email"].ToString();
+                        txtPhone.Text = reader["Phone"].ToString();
+                        txtHeroDescription.Text = reader["HeroDescription"].ToString();
+                        txtAboutDescription.Text = reader["AboutDescription"].ToString();
+                        txtGitHubUrl.Text = reader["GitHubUrl"].ToString();
+                        txtGitHubText.Text = reader["GitHubText"].ToString();
+                        txtLinkedInUrl.Text = reader["LinkedInUrl"].ToString();
+                        txtLinkedInText.Text = reader["LinkedInText"].ToString();
+                        txtResumeUrl.Text = reader["ResumeUrl"].ToString();
+                        
+                        string profileImagePath = reader["ProfileImagePath"].ToString();
+                        hdnCurrentProfileImagePath.Value = profileImagePath;
+                        
+                        if (!string.IsNullOrEmpty(profileImagePath))
+                        {
+                            imgCurrentProfile.ImageUrl = profileImagePath;
+                            currentProfileDiv.Visible = true;
+                        }
+                    }
+                    reader.Close();
+                }
+                catch (Exception ex)
+                {
+                    ShowMessage("Error loading personal information: " + ex.Message, "danger");
+                }
+            }
+        }
+
+        private void LoadCurrentInfoPreview()
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    string query = "SELECT TOP 1 * FROM PersonalInfo WHERE IsActive = 1 ORDER BY CreatedDate DESC";
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    
+                    if (reader.Read())
+                    {
+                        StringBuilder html = new StringBuilder();
+                        html.Append("<div class='row'>");
+                        html.Append("<div class='col-md-6'>");
+                        html.AppendFormat("<div class='info-item'><span class='info-label'>Name:</span> {0}</div>", reader["FullName"]);
+                        html.AppendFormat("<div class='info-item'><span class='info-label'>Role:</span> {0}</div>", reader["Role"]);
+                        html.AppendFormat("<div class='info-item'><span class='info-label'>Email:</span> {0}</div>", reader["Email"]);
+                        html.AppendFormat("<div class='info-item'><span class='info-label'>Phone:</span> {0}</div>", reader["Phone"]);
+                        html.AppendFormat("<div class='info-item'><span class='info-label'>GitHub:</span> <a href='{0}' target='_blank'>{1}</a></div>", reader["GitHubUrl"], reader["GitHubText"]);
+                        html.AppendFormat("<div class='info-item'><span class='info-label'>LinkedIn:</span> <a href='{0}' target='_blank'>{1}</a></div>", reader["LinkedInUrl"], reader["LinkedInText"]);
+                        html.Append("</div>");
+                        html.Append("<div class='col-md-6'>");
+                        html.AppendFormat("<div class='info-item'><span class='info-label'>Hero Description:</span><br/>{0}</div>", reader["HeroDescription"]);
+                        html.AppendFormat("<div class='info-item'><span class='info-label'>About Description:</span><br/>{0}</div>", reader["AboutDescription"]);
+                        html.Append("</div>");
+                        html.Append("</div>");
+                        
+                        ltlCurrentInfo.Text = html.ToString();
+                    }
+                    else
+                    {
+                        ltlCurrentInfo.Text = "<p class='text-muted'>No personal information found. Please fill out the form above.</p>";
+                    }
+                    reader.Close();
+                }
+                catch (Exception ex)
+                {
+                    ltlCurrentInfo.Text = "<p class='text-danger'>Error loading preview: " + ex.Message + "</p>";
+                }
+            }
+        }
+
+        protected void btnSave_Click(object sender, EventArgs e)
+        {
+            if (Page.IsValid)
+            {
+                string fullName = txtFullName.Text.Trim();
+                string role = txtRole.Text.Trim();
+                string email = txtEmail.Text.Trim();
+                string phone = txtPhone.Text.Trim();
+                string heroDescription = txtHeroDescription.Text.Trim();
+                string aboutDescription = txtAboutDescription.Text.Trim();
+                string gitHubUrl = txtGitHubUrl.Text.Trim();
+                string gitHubText = txtGitHubText.Text.Trim();
+                string linkedInUrl = txtLinkedInUrl.Text.Trim();
+                string linkedInText = txtLinkedInText.Text.Trim();
+                string resumeUrl = txtResumeUrl.Text.Trim();
+                string profileImagePath = hdnCurrentProfileImagePath.Value;
+
+                // Handle profile image upload
+                if (FileUploadProfile.HasFile)
+                {
+                    string newImagePath = HandleImageUpload();
+                    if (newImagePath != null)
+                    {
+                        // Delete old image
+                        if (!string.IsNullOrEmpty(profileImagePath))
+                        {
+                            DeleteImageFile(profileImagePath);
+                        }
+                        profileImagePath = newImagePath;
+                    }
+                    else
+                    {
+                        return; // Error occurred during upload
+                    }
+                }
+
+                using (SqlConnection con = new SqlConnection(cs))
+                {
+                    try
+                    {
+                        con.Open();
+                        
+                        if (!string.IsNullOrEmpty(hdnPersonalInfoId.Value))
+                        {
+                            // Update existing record
+                            string query = @"UPDATE PersonalInfo SET 
+                                           FullName = @fullName, Role = @role, Email = @email, Phone = @phone,
+                                           HeroDescription = @heroDesc, AboutDescription = @aboutDesc,
+                                           GitHubUrl = @gitHubUrl, GitHubText = @gitHubText,
+                                           LinkedInUrl = @linkedInUrl, LinkedInText = @linkedInText,
+                                           ResumeUrl = @resumeUrl, ProfileImagePath = @profileImage,
+                                           UpdatedDate = GETDATE()
+                                           WHERE Id = @id";
+                            SqlCommand cmd = new SqlCommand(query, con);
+                            cmd.Parameters.AddWithValue("@id", Convert.ToInt32(hdnPersonalInfoId.Value));
+                            AddParameters(cmd, fullName, role, email, phone, heroDescription, aboutDescription, gitHubUrl, gitHubText, linkedInUrl, linkedInText, resumeUrl, profileImagePath);
+                            
+                            int result = cmd.ExecuteNonQuery();
+                            if (result > 0)
+                            {
+                                ShowMessage("Personal information updated successfully!", "success");
+                            }
+                            else
+                            {
+                                ShowMessage("Failed to update personal information!", "danger");
+                            }
+                        }
+                        else
+                        {
+                            // Insert new record
+                            string query = @"INSERT INTO PersonalInfo 
+                                           (FullName, Role, Email, Phone, HeroDescription, AboutDescription,
+                                            GitHubUrl, GitHubText, LinkedInUrl, LinkedInText, ResumeUrl, ProfileImagePath,
+                                            IsActive, CreatedDate, UpdatedDate)
+                                           VALUES 
+                                           (@fullName, @role, @email, @phone, @heroDesc, @aboutDesc,
+                                            @gitHubUrl, @gitHubText, @linkedInUrl, @linkedInText, @resumeUrl, @profileImage,
+                                            1, GETDATE(), GETDATE())";
+                            SqlCommand cmd = new SqlCommand(query, con);
+                            AddParameters(cmd, fullName, role, email, phone, heroDescription, aboutDescription, gitHubUrl, gitHubText, linkedInUrl, linkedInText, resumeUrl, profileImagePath);
+                            
+                            int result = cmd.ExecuteNonQuery();
+                            if (result > 0)
+                            {
+                                ShowMessage("Personal information saved successfully!", "success");
+                            }
+                            else
+                            {
+                                ShowMessage("Failed to save personal information!", "danger");
+                            }
+                        }
+                        
+                        LoadPersonalInfo();
+                        LoadCurrentInfoPreview();
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowMessage("Error: " + ex.Message, "danger");
+                    }
+                }
+            }
+        }
+
+        private void AddParameters(SqlCommand cmd, string fullName, string role, string email, string phone, 
+                                 string heroDescription, string aboutDescription, string gitHubUrl, string gitHubText,
+                                 string linkedInUrl, string linkedInText, string resumeUrl, string profileImagePath)
+        {
+            cmd.Parameters.AddWithValue("@fullName", fullName);
+            cmd.Parameters.AddWithValue("@role", role);
+            cmd.Parameters.AddWithValue("@email", email);
+            cmd.Parameters.AddWithValue("@phone", phone);
+            cmd.Parameters.AddWithValue("@heroDesc", heroDescription);
+            cmd.Parameters.AddWithValue("@aboutDesc", aboutDescription);
+            cmd.Parameters.AddWithValue("@gitHubUrl", gitHubUrl);
+            cmd.Parameters.AddWithValue("@gitHubText", gitHubText);
+            cmd.Parameters.AddWithValue("@linkedInUrl", linkedInUrl);
+            cmd.Parameters.AddWithValue("@linkedInText", linkedInText);
+            cmd.Parameters.AddWithValue("@resumeUrl", resumeUrl);
+            cmd.Parameters.AddWithValue("@profileImage", profileImagePath);
+        }
+
+        protected void btnReset_Click(object sender, EventArgs e)
+        {
+            ClearForm();
+            LoadPersonalInfo();
+        }
+
+        private string HandleImageUpload()
+        {
+            try
+            {
+                string fileName = Path.GetFileName(FileUploadProfile.FileName);
+                string fileExtension = Path.GetExtension(fileName).ToLower();
+                
+                // Validate file type
+                if (fileExtension == ".jpg" || fileExtension == ".jpeg" || fileExtension == ".png" || fileExtension == ".gif")
+                {
+                    // Create uploads directory if it doesn't exist
+                    string uploadDir = Server.MapPath("~/Uploads/");
+                    if (!Directory.Exists(uploadDir))
+                    {
+                        Directory.CreateDirectory(uploadDir);
+                    }
+                    
+                    // Create unique filename
+                    string uniqueFileName = "profile_" + Guid.NewGuid().ToString() + fileExtension;
+                    string filePath = uploadDir + uniqueFileName;
+                    
+                    FileUploadProfile.SaveAs(filePath);
+                    return "/Uploads/" + uniqueFileName;
+                }
+                else
+                {
+                    ShowMessage("Please select a valid image file (jpg, jpeg, png, gif)!", "danger");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowMessage("Error uploading file: " + ex.Message, "danger");
+                return null;
+            }
+        }
+
+        private void DeleteImageFile(string imagePath)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(imagePath))
+                {
+                    string physicalPath = Server.MapPath("~" + imagePath);
+                    if (File.Exists(physicalPath))
+                    {
+                        File.Delete(physicalPath);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log error but don't show to user as it's not critical
+            }
+        }
+
+        private void ClearForm()
+        {
+            txtFullName.Text = "";
+            txtRole.Text = "";
+            txtEmail.Text = "";
+            txtPhone.Text = "";
+            txtHeroDescription.Text = "";
+            txtAboutDescription.Text = "";
+            txtGitHubUrl.Text = "";
+            txtGitHubText.Text = "";
+            txtLinkedInUrl.Text = "";
+            txtLinkedInText.Text = "";
+            txtResumeUrl.Text = "";
+            hdnPersonalInfoId.Value = "";
+            hdnCurrentProfileImagePath.Value = "";
+            currentProfileDiv.Visible = false;
+        }
+
+        private void ShowMessage(string message, string type)
+        {
+            string alertClass = type == "success" ? "alert-success" : "alert-danger";
+            string script = $@"
+                var alertDiv = document.createElement('div');
+                alertDiv.className = 'alert {alertClass} alert-dismissible fade show';
+                alertDiv.innerHTML = '{message}<button type=""button"" class=""btn-close"" data-bs-dismiss=""alert""></button>';
+                document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.container').firstChild);
+                setTimeout(function() {{
+                    if (alertDiv.parentNode) {{
+                        alertDiv.parentNode.removeChild(alertDiv);
+                    }}
+                }}, 5000);
+            ";
+            ClientScript.RegisterStartupScript(this.GetType(), "ShowMessage", script, true);
+        }
+    }
+}

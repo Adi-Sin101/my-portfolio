@@ -1,0 +1,47 @@
+﻿# Portfolio Images Setup
+
+## Required Images for Portfolio
+
+To complete your portfolio setup, you need to copy the following images from your VS Code project to the appropriate directories:
+
+### Profile and Hero Images:
+- `Adiba_pic.jpg` → Copy to root directory or `~/Uploads/` (update path in PersonalInfo table)
+
+### Experience Images:
+- `hult1.jpg` → Copy to root directory or `~/Uploads/`
+- `SheStem.jpg` → Copy to root directory or `~/Uploads/`
+- `casecrackfinalist.jpg` → Copy to root directory or `~/Uploads/`
+- `KBEC_member.jpg` → Copy to root directory or `~/Uploads/`
+
+### Project Images:
+- `portfilo.png` → Copy to root directory or `~/Uploads/`
+- `pawpal.jpeg` → Copy to root directory or `~/Uploads/`
+- `fitnesstracker.jpeg` → Copy to root directory or `~/Uploads/`
+- `casecrack.jpg` → Copy to root directory or `~/Uploads/`
+
+### Resume:
+- `Adiba_CV.pdf` → Copy to root directory
+
+## Database Setup
+
+Run the SQL script `Database/portfolio-schema.sql` to create all necessary tables and insert sample data.
+
+## File Structure After Setup:
+```
+adminpanel/
+├── Home.aspx (Public Portfolio)
+├── Default.aspx (Admin Dashboard)
+├── Login.aspx (Admin Login)
+├── Projects.aspx (Project Management)
+├── Content/
+│   └── portfolio-style.css (Your original styles)
+├── Scripts/
+│   └── portfolio.js (Your original functionality)
+├── Uploads/ (Project images uploaded via admin)
+├── Adiba_pic.jpg (Profile image)
+├── hult1.jpg, SheStem.jpg, etc. (Experience images)
+├── portfilo.png, pawpal.jpeg, etc. (Project images)
+└── Adiba_CV.pdf (Resume)
+```
+
+Your portfolio is now ready with all the original VS Code functionality!

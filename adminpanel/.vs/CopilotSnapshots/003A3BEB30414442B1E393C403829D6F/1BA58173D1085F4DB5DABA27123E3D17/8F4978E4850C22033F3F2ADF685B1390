@@ -1,0 +1,176 @@
+﻿-- Portfolio Database Schema
+-- Run these SQL commands to create the necessary tables for your admin panel
+
+USE Admin_Panel;
+
+-- Admin User Table (for login)
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='AdminUser' AND xtype='U')
+BEGIN
+    CREATE TABLE AdminUser (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        Username NVARCHAR(50) NOT NULL UNIQUE,
+        PasswordHash NVARCHAR(100) NOT NULL,
+        IsActive BIT DEFAULT 1,
+        CreatedDate DATETIME DEFAULT GETDATE()
+    );
+    
+    -- Insert default admin user
+    INSERT INTO AdminUser (Username, PasswordHash, IsActive) 
+    VALUES ('admin', 'admin123', 1);
+END
+
+-- Personal Information Table
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='PersonalInfo' AND xtype='U')
+BEGIN
+    CREATE TABLE PersonalInfo (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        FullName NVARCHAR(100) NOT NULL,
+        Role NVARCHAR(100) NOT NULL,
+        HeroDescription NVARCHAR(MAX),
+        AboutDescription NVARCHAR(MAX),
+        Email NVARCHAR(100),
+        Phone NVARCHAR(50),
+        GitHubUrl NVARCHAR(200),
+        LinkedInUrl NVARCHAR(200),
+        GitHubText NVARCHAR(50),
+        LinkedInText NVARCHAR(50),
+        ResumeUrl NVARCHAR(200),
+        ProfileImagePath NVARCHAR(200),
+        IsActive BIT DEFAULT 1,
+        CreatedDate DATETIME DEFAULT GETDATE(),
+        UpdatedDate DATETIME DEFAULT GETDATE()
+    );
+END
+
+-- Skills Table
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Skills' AND xtype='U')
+BEGIN
+    CREATE TABLE Skills (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        Name NVARCHAR(100) NOT NULL,
+        IconUrl NVARCHAR(200),
+        Percentage INT DEFAULT 0,
+        DisplayOrder INT DEFAULT 0,
+        IsActive BIT DEFAULT 1,
+        CreatedDate DATETIME DEFAULT GETDATE()
+    );
+END
+
+-- Experience Table
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Experience' AND xtype='U')
+BEGIN
+    CREATE TABLE Experience (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        Title NVARCHAR(200) NOT NULL,
+        Company NVARCHAR(200) NOT NULL,
+        Duration NVARCHAR(100),
+        StartDate DATE,
+        EndDate DATE,
+        Description NVARCHAR(MAX),
+        ImagePath NVARCHAR(200),
+        IsActive BIT DEFAULT 1,
+        CreatedDate DATETIME DEFAULT GETDATE()
+    );
+END
+
+-- Education Table
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Education' AND xtype='U')
+BEGIN
+    CREATE TABLE Education (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        Degree NVARCHAR(200) NOT NULL,
+        Institution NVARCHAR(200) NOT NULL,
+        Year NVARCHAR(50),
+        StartYear INT,
+        EndYear INT,
+        Grade NVARCHAR(50),
+        Description NVARCHAR(MAX),
+        IsActive BIT DEFAULT 1,
+        CreatedDate DATETIME DEFAULT GETDATE()
+    );
+END
+
+-- Projects Table (if not exists)
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Projects' AND xtype='U')
+BEGIN
+    CREATE TABLE Projects (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        Title NVARCHAR(200) NOT NULL,
+        Description NVARCHAR(MAX),
+        ImagePath NVARCHAR(500),
+        TechUsed NVARCHAR(500),
+        GitUrl NVARCHAR(500),
+        CreatedDate DATETIME DEFAULT GETDATE()
+    );
+END
+
+-- Insert sample data only if tables are empty
+-- Personal Info
+IF NOT EXISTS (SELECT * FROM PersonalInfo)
+BEGIN
+    INSERT INTO PersonalInfo (FullName, Role, HeroDescription, AboutDescription, Email, Phone, GitHubUrl, LinkedInUrl, GitHubText, LinkedInText, ResumeUrl, ProfileImagePath)
+    VALUES (
+        'Adiba Tahsin',
+        'Web Developer',
+        'A Computer Science student with a strong foundation in frontend development and programming...',
+        'I am Adiba Tahsin, a passionate and driven Computer Science student at KUET. I thrive on building engaging digital experiences and solving real-world problems through technology. My expertise spans frontend development with HTML, CSS, JavaScript, and React, as well as backend and design tools. I am committed to continuous learning, teamwork, and contributing to innovative projects that make a positive impact.',
+        'adiba0tahsin@gmail.com',
+        '+8801882083192',
+        'https://github.com/Adi-Sin101',
+        'https://www.linkedin.com/in/adiba-tahsin-985b452a2',
+        'Adi-Sin101',
+        'adiba-tahsin-985b452a2',
+        'Adiba_CV.pdf',
+        'Adiba_pic.jpg'
+    );
+END
+
+-- Skills
+IF NOT EXISTS (SELECT * FROM Skills)
+BEGIN
+    INSERT INTO Skills (Name, IconUrl, Percentage, DisplayOrder) VALUES
+    ('HTML5', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg', 90, 1),
+    ('CSS3', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg', 85, 2),
+    ('JavaScript', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg', 75, 3),
+    ('React', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg', 70, 4),
+    ('Next.js', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg', 65, 5),
+    ('Node.js', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg', 60, 6),
+    ('Python', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg', 80, 7),
+    ('Java', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg', 75, 8),
+    ('Git', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg', 85, 9),
+    ('Firebase', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg', 70, 10),
+    ('Figma', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg', 75, 11);
+END
+
+-- Experience
+IF NOT EXISTS (SELECT * FROM Experience)
+BEGIN
+    INSERT INTO Experience (Title, Company, Duration, StartDate, EndDate, Description, ImagePath) VALUES
+    ('Campus Ambassador', 'She-STEM', 'Aug 2025 - Present', '2025-08-01', NULL, 'Serving as the She-STEM Campus Ambassador at KUET, I promoted STEM education among female students by organizing interactive sessions, coordinating social media campaigns, and encouraging participation in national-level tech initiatives.', 'SheStem.jpg'),
+    ('Assistant Operations Secretary', 'KUET Business and Entrepreneurship Club', 'April 2024 – Present', '2024-04-01', NULL, 'Responsible for assisting in the strategic planning and execution of club initiatives, including events, workshops, and competitions. Manage logistical operations, coordinate with internal teams, and contribute to enhancing organizational efficiency.', 'KBEC_member.jpg'),
+    ('CaseCrack 2.0 Finalist', 'Tech Business Case Competition organized by KBEC, powered by She-STEM', 'July 2024', '2024-07-01', '2024-07-31', 'Selected as a finalist in CaseCrack 2024, a tech-business case competition. Collaborated in a cross-functional team to analyze startup-inspired challenges and propose sustainable tech-driven solutions.', 'casecrackfinalist.jpg'),
+    ('Hult Prize Volunteer', 'KUET', 'Jan 2024 - April 2024', '2024-01-01', '2024-04-30', 'Contributed to organizing the Hult Prize on-campus program at KUET by managing event logistics, coordinating with participants and judges, and promoting the competition among students.', 'hult1.jpg');
+END
+
+-- Education
+IF NOT EXISTS (SELECT * FROM Education)
+BEGIN
+    INSERT INTO Education (Degree, Institution, Year, StartYear, EndYear, Grade) VALUES
+    ('B.Sc in Computer Science', 'Khulna University of Engineering & Technology', 'Expected: 2027', 2023, 2027, 'CGPA: 3.28 / 4.00'),
+    ('HSC', 'Khulna Govt. Girls'' College', '2021', 2019, 2021, 'GPA: 5.00'),
+    ('SSC', 'Govt. Coronation Secondary Girls'' School', '2019', 2017, 2019, 'GPA: 5.00');
+END
+
+-- Add some sample projects (if not already exist)
+IF NOT EXISTS (SELECT * FROM Projects WHERE Title = 'Portfolio Website')
+BEGIN
+    INSERT INTO Projects (Title, Description, ImagePath, TechUsed, GitUrl, CreatedDate) VALUES
+    ('Portfolio Website', 'A personal portfolio website to showcase my projects, skills, and experience. Built with HTML, CSS, and JavaScript for a modern, responsive design.', 'portfilo.png', '<span class="tool">HTML</span>, <span class="tool">CSS</span>, <span class="tool">JavaScript</span>', 'https://github.com/Adi-Sin101/my-portfolio.git', GETDATE()),
+    ('PawPal (Petcare App)', 'PawPal is an Android app that helps pet owners manage daily activities, health records, expenses, and vet contacts. Built with Firebase for secure authentication and real-time data.', 'pawpal.jpeg', '<span class="tool">Android</span>, <span class="tool">Java</span>, <span class="tool">Firebase</span>, <span class="tool">Material Design</span>', 'https://github.com/Adi-Sin101/PawPal_Android.git', GETDATE()),
+    ('Fitness Tracking System', 'A simple C++ project to manage fitness profiles, calculate BMI, and track daily food intake with a built-in calorie database.', 'fitnesstracker.jpeg', '<span class="tool">C++</span>, <span class="tool">Standard Library</span>', 'https://github.com/Adi-Sin101/Fitness-Tracking-System.git', GETDATE()),
+    ('Company Management System', 'A console-based C++ application to manage recruitment and employee data. Features a menu-driven interface and persistent data storage.', 'casecrack.jpg', '<span class="tool">C++</span>, <span class="tool">File I/O</span>', 'https://github.com/Adi-Sin101/Company_Management_System.git', GETDATE());
+END
+
+PRINT 'Portfolio database schema created successfully!'
+PRINT 'Default admin user: admin / admin123'
+PRINT 'You can now run your admin panel application.'

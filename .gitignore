@@ -1,0 +1,11 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.cache
+*.dbmdl
+*.log
+
+# Node / Web Dev
+node_modules/
+dist/

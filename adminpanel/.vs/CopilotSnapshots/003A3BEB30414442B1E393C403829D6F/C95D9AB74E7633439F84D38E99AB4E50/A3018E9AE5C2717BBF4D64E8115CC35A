@@ -1,0 +1,183 @@
+﻿// Portfolio JavaScript functionality - Integrated from VS Code
+const roles = [
+    "Web Developer",
+    "App Developer", 
+    "Programmer",
+    "Tech-Business Case Competitor",
+    "CS Student"
+];
+
+let index = 0;
+let roleElement;
+
+function rotaterole() {
+    if (!roleElement) return;
+    
+    roleElement.classList.add("fade-out");
+
+    setTimeout(() => {
+        roleElement.textContent = roles[index];
+        roleElement.classList.remove("fade-out");
+        index = (index + 1) % roles.length;
+    }, 500);
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Initialize role rotation
+    roleElement = document.getElementById("role-text");
+    if (roleElement) {
+        setInterval(rotaterole, 2500);
+    }
+
+    // Skills progress bar animation
+    const skillsObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const fills = entry.target.querySelectorAll(".progress-fill");
+                fills.forEach(fill => {
+                    const percentage = fill.style.width || fill.getAttribute("data-percentage");
+                    if (percentage) {
+                        fill.style.width = "0%";
+                        setTimeout(() => {
+                            fill.style.width = percentage;
+                        }, 200);
+                    }
+                });
+            }
+        });
+    }, {
+        threshold: 0.3
+    });
+
+    // Observe skill cards and skill sections
+    document.querySelectorAll(".skill-card, .skill, .skills-section").forEach(card => {
+        skillsObserver.observe(card);
+    });
+
+    // Dark mode toggle
+    const darkModeToggle = document.getElementById("darkModeToggle");
+    if (darkModeToggle) {
+        // Load saved dark mode preference
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+            darkModeToggle.textContent = '☀️';
+        }
+
+        darkModeToggle.addEventListener("click", () => {
+            document.body.classList.toggle("dark-mode");
+            const isDark = document.body.classList.contains('dark-mode');
+            
+            // Update toggle icon
+            darkModeToggle.textContent = isDark ? '☀️' : '🌙';
+            
+            // Save preference
+            localStorage.setItem('darkMode', isDark);
+        });
+    }
+
+    // Fade-in scroll animation
+    const faders = document.querySelectorAll(".fade-in");
+    const fadeObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+            }
+        });
+    }, { threshold: 0.1 });
+
+    faders.forEach(fadeEl => fadeObserver.observe(fadeEl));
+
+    // Modal logic
+    const modal = document.getElementById("experienceModal");
+    const modalImage = document.getElementById("modalImage");
+    const modalText = document.getElementById("modalText");
+    const closeModal = document.querySelector(".close-modal");
+
+    if (modal && modalImage && modalText && closeModal) {
+        document.querySelectorAll(".experience-card").forEach(card => {
+            card.addEventListener("click", () => {
+                const img = card.querySelector("img");
+                const title = card.querySelector("h4");
+                const company = card.querySelector(".company");
+                const desc = card.querySelector("p:not(.company)");
+
+                if (img && title && company && desc) {
+                    modalImage.src = img.src;
+                    modalText.innerHTML = `<h3>${title.textContent}</h3><p><strong>${company.textContent}</strong></p><p>${desc.textContent}</p>`;
+                    modal.style.display = "block";
+                }
+            });
+        });
+
+        closeModal.addEventListener("click", () => {
+            modal.style.display = "none";
+        });
+
+        window.addEventListener("click", e => {
+            if (e.target === modal) modal.style.display = "none";
+        });
+
+        // Close modal with Escape key
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape" && modal.style.display === "block") {
+                modal.style.display = "none";
+            }
+        });
+    }
+
+    // Smooth scrolling for navigation links
+    const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetSection = document.querySelector(targetId);
+            
+            if (targetSection) {
+                targetSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Add scroll effect to navbar
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            if (window.scrollY > 100) {
+                if (document.body.classList.contains('dark-mode')) {
+                    navbar.style.background = 'rgba(30, 30, 30, 0.98)';
+                } else {
+                    navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+                }
+                navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            } else {
+                if (document.body.classList.contains('dark-mode')) {
+                    navbar.style.background = 'rgba(30, 30, 30, 0.95)';
+                } else {
+                    navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+                }
+                navbar.style.boxShadow = 'none';
+            }
+        }
+    });
+
+    // Add fade-in class to elements that should animate
+    const animatedElements = document.querySelectorAll('.about-section, .skills-section, .experience-section, .projects-section, .contact-section');
+    animatedElements.forEach(el => {
+        el.classList.add('fade-in');
+    });
+
+    // Add fade-in to individual cards
+    const cards = document.querySelectorAll('.skill, .skill-card, .experience-card, .project-card, .timeline-item');
+    cards.forEach((card, index) => {
+        card.classList.add('fade-in');
+        // Stagger animations slightly
+        card.style.transitionDelay = `${index * 0.1}s`;
+    });
+});
+
+

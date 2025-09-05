@@ -1,0 +1,271 @@
+-- Portfolio Database Schema - Updated for Your Existing Tables
+-- Run these SQL commands to update your existing Admin_Panel database
+
+USE Admin_Panel;
+
+-- 1. Check if PersonalInfo table exists, if not create it to consolidate personal data
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='PersonalInfo' AND xtype='U')
+BEGIN
+    CREATE TABLE PersonalInfo (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        FullName NVARCHAR(100) NOT NULL,
+        Role NVARCHAR(100) NOT NULL,
+        HeroDescription NVARCHAR(MAX),
+        AboutDescription NVARCHAR(MAX),
+        Email NVARCHAR(100),
+        Phone NVARCHAR(50),
+        GitHubUrl NVARCHAR(200),
+        LinkedInUrl NVARCHAR(200),
+        GitHubText NVARCHAR(50),
+        LinkedInText NVARCHAR(50),
+        ResumeUrl NVARCHAR(200),
+        ProfileImagePath NVARCHAR(200),
+        IsActive BIT DEFAULT 1,
+        CreatedDate DATETIME DEFAULT GETDATE(),
+        UpdatedDate DATETIME DEFAULT GETDATE()
+    );
+    
+    -- Migrate data from existing tables if they exist
+    IF EXISTS (SELECT * FROM sysobjects WHERE name='AboutContent' AND xtype='U')
+    BEGIN
+        INSERT INTO PersonalInfo (FullName, Role, AboutDescription, IsActive, CreatedDate)
+        SELECT 
+            COALESCE(Title, 'Your Name') as FullName,
+            COALESCE(Subtitle, 'Your Role') as Role, 
+            Content as AboutDescription,
+            1 as IsActive,
+            GETDATE() as CreatedDate
+        FROM AboutContent
+        WHERE Id = (SELECT TOP 1 Id FROM AboutContent ORDER BY Id DESC);
+    END
+    
+    IF EXISTS (SELECT * FROM sysobjects WHERE name='ContactInfo' AND xtype='U')
+    BEGIN
+        UPDATE PersonalInfo SET 
+            Email = (SELECT TOP 1 Email FROM ContactInfo ORDER BY Id DESC),
+            Phone = (SELECT TOP 1 Phone FROM ContactInfo ORDER BY Id DESC),
+            GitHubUrl = (SELECT TOP 1 GitHubUrl FROM ContactInfo ORDER BY Id DESC),
+            LinkedInUrl = (SELECT TOP 1 LinkedInUrl FROM ContactInfo ORDER by Id DESC)
+        WHERE Id = (SELECT TOP 1 Id FROM PersonalInfo ORDER BY Id DESC);
+    END
+    
+    IF EXISTS (SELECT * FROM sysobjects WHERE name='HomeContent' AND xtype='U')
+    BEGIN
+        UPDATE PersonalInfo SET 
+            HeroDescription = (SELECT TOP 1 Description FROM HomeContent ORDER BY Id DESC)
+        WHERE Id = (SELECT TOP 1 Id FROM PersonalInfo ORDER BY Id DESC);
+    END
+END
+
+-- 2. Update AdminUser table structure to match system expectations
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='AdminUser' AND xtype='U')
+BEGIN
+    -- If AdminUsers table exists but AdminUser doesn't, create AdminUser
+    IF EXISTS (SELECT * FROM sysobjects WHERE name='AdminUsers' AND xtype='U')
+    BEGIN
+        CREATE TABLE AdminUser (
+            Id INT IDENTITY(1,1) PRIMARY KEY,
+            Username NVARCHAR(50) NOT NULL UNIQUE,
+            PasswordHash NVARCHAR(100) NOT NULL,
+            IsActive BIT DEFAULT 1,
+            CreatedDate DATETIME DEFAULT GETDATE()
+        );
+        
+        -- Migrate data from AdminUsers to AdminUser
+        INSERT INTO AdminUser (Username, PasswordHash, IsActive, CreatedDate)
+        SELECT Username, Password, 1, GETDATE() FROM AdminUsers;
+    END
+    ELSE
+    BEGIN
+        -- Create AdminUser table with default admin
+        CREATE TABLE AdminUser (
+            Id INT IDENTITY(1,1) PRIMARY KEY,
+            Username NVARCHAR(50) NOT NULL UNIQUE,
+            PasswordHash NVARCHAR(100) NOT NULL,
+            IsActive BIT DEFAULT 1,
+            CreatedDate DATETIME DEFAULT GETDATE()
+        );
+        
+        INSERT INTO AdminUser (Username, PasswordHash, IsActive) 
+        VALUES ('admin', 'admin123', 1);
+    END
+END
+
+-- 3. Update Projects table if needed
+IF EXISTS (SELECT * FROM sysobjects WHERE name='Projects' AND xtype='U')
+BEGIN
+    -- Check if TechUsed column exists, if not add it
+    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                   WHERE TABLE_NAME = 'Projects' AND COLUMN_NAME = 'TechUsed')
+    BEGIN
+        ALTER TABLE Projects ADD TechUsed NVARCHAR(500);
+    END
+    
+    -- Check if GitUrl column exists, if not add it
+    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                   WHERE TABLE_NAME = 'Projects' AND COLUMN_NAME = 'GitUrl')
+    BEGIN
+        ALTER TABLE Projects ADD GitUrl NVARCHAR(500);
+    END
+    
+    -- Check if CreatedDate column exists, if not add it
+    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                   WHERE TABLE_NAME = 'Projects' AND COLUMN_NAME = 'CreatedDate')
+    BEGIN
+        ALTER TABLE Projects ADD CreatedDate DATETIME DEFAULT GETDATE();
+    END
+END
+
+-- 4. Update Skills table if needed
+IF EXISTS (SELECT * FROM sysobjects WHERE name='Skills' AND xtype='U')
+BEGIN
+    -- Check if IconUrl column exists
+    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                   WHERE TABLE_NAME = 'Skills' AND COLUMN_NAME = 'IconUrl')
+    BEGIN
+        ALTER TABLE Skills ADD IconUrl NVARCHAR(200);
+    END
+    
+    -- Check if Percentage column exists
+    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                   WHERE TABLE_NAME = 'Skills' AND COLUMN_NAME = 'Percentage')
+    BEGIN
+        ALTER TABLE Skills ADD Percentage INT DEFAULT 0;
+    END
+    
+    -- Check if DisplayOrder column exists
+    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                   WHERE TABLE_NAME = 'Skills' AND COLUMN_NAME = 'DisplayOrder')
+    BEGIN
+        ALTER TABLE Skills ADD DisplayOrder INT DEFAULT 0;
+    END
+    
+    -- Check if IsActive column exists
+    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                   WHERE TABLE_NAME = 'Skills' AND COLUMN_NAME = 'IsActive')
+    BEGIN
+        ALTER TABLE Skills ADD IsActive BIT DEFAULT 1;
+    END
+    
+    -- Check if CreatedDate column exists
+    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                   WHERE TABLE_NAME = 'Skills' AND COLUMN_NAME = 'CreatedDate')
+    BEGIN
+        ALTER TABLE Skills ADD CreatedDate DATETIME DEFAULT GETDATE();
+    END
+END
+
+-- 5. Fix Experience table name (if it's spelled wrong)
+IF EXISTS (SELECT * FROM sysobjects WHERE name='Exprience' AND xtype='U')
+   AND NOT EXISTS (SELECT * FROM sysobjects WHERE name='Experience' AND xtype='U')
+BEGIN
+    EXEC sp_rename 'Exprience', 'Experience';
+END
+
+-- 6. Update Experience table structure
+IF EXISTS (SELECT * FROM sysobjects WHERE name='Experience' AND xtype='U')
+BEGIN
+    -- Add missing columns if they don't exist
+    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                   WHERE TABLE_NAME = 'Experience' AND COLUMN_NAME = 'Duration')
+    BEGIN
+        ALTER TABLE Experience ADD Duration NVARCHAR(100);
+    END
+    
+    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                   WHERE TABLE_NAME = 'Experience' AND COLUMN_NAME = 'StartDate')
+    BEGIN
+        ALTER TABLE Experience ADD StartDate DATE;
+    END
+    
+    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                   WHERE TABLE_NAME = 'Experience' AND COLUMN_NAME = 'EndDate')
+    BEGIN
+        ALTER TABLE Experience ADD EndDate DATE;
+    END
+    
+    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                   WHERE TABLE_NAME = 'Experience' AND COLUMN_NAME = 'ImagePath')
+    BEGIN
+        ALTER TABLE Experience ADD ImagePath NVARCHAR(200);
+    END
+    
+    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                   WHERE TABLE_NAME = 'Experience' AND COLUMN_NAME = 'IsActive')
+    BEGIN
+        ALTER TABLE Experience ADD IsActive BIT DEFAULT 1;
+    END
+    
+    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                   WHERE TABLE_NAME = 'Experience' AND COLUMN_NAME = 'CreatedDate')
+    BEGIN
+        ALTER TABLE Experience ADD CreatedDate DATETIME DEFAULT GETDATE();
+    END
+END
+
+-- 7. Add sample data if tables are empty
+-- Update Skills with sample data and icons
+IF EXISTS (SELECT * FROM Skills) AND NOT EXISTS (SELECT * FROM Skills WHERE IconUrl IS NOT NULL)
+BEGIN
+    -- Add sample icons and percentages to existing skills
+    UPDATE Skills SET 
+        IconUrl = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg',
+        Percentage = 90,
+        DisplayOrder = 1
+    WHERE Name LIKE '%HTML%' OR Name LIKE '%html%';
+    
+    UPDATE Skills SET 
+        IconUrl = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg',
+        Percentage = 85,
+        DisplayOrder = 2
+    WHERE Name LIKE '%CSS%' OR Name LIKE '%css%';
+    
+    UPDATE Skills SET 
+        IconUrl = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg',
+        Percentage = 75,
+        DisplayOrder = 3
+    WHERE Name LIKE '%JavaScript%' OR Name LIKE '%javascript%' OR Name LIKE '%JS%';
+    
+    UPDATE Skills SET 
+        IconUrl = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',
+        Percentage = 70,
+        DisplayOrder = 4
+    WHERE Name LIKE '%React%' OR Name LIKE '%react%';
+    
+    UPDATE Skills SET 
+        IconUrl = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg',
+        Percentage = 80,
+        DisplayOrder = 7
+    WHERE Name LIKE '%Python%' OR Name LIKE '%python%';
+    
+    UPDATE Skills SET 
+        IconUrl = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg',
+        Percentage = 75,
+        DisplayOrder = 8
+    WHERE Name LIKE '%Java%' OR Name LIKE '%java%';
+END
+
+-- Insert sample personal info if PersonalInfo is empty
+IF NOT EXISTS (SELECT * FROM PersonalInfo)
+BEGIN
+    INSERT INTO PersonalInfo (FullName, Role, HeroDescription, AboutDescription, Email, Phone, GitHubUrl, LinkedInUrl, GitHubText, LinkedInText, ResumeUrl, ProfileImagePath)
+    VALUES (
+        'Adiba Tahsin',
+        'Web Developer',
+        'A Computer Science student with a strong foundation in frontend development and programming...',
+        'I am Adiba Tahsin, a passionate and driven Computer Science student at KUET. I thrive on building engaging digital experiences and solving real-world problems through technology.',
+        'adiba0tahsin@gmail.com',
+        '+8801882083192',
+        'https://github.com/Adi-Sin101',
+        'https://www.linkedin.com/in/adiba-tahsin-985b452a2',
+        'Adi-Sin101',
+        'adiba-tahsin-985b452a2',
+        'Adiba_CV.pdf',
+        'Adiba_pic.jpg'
+    );
+END
+
+PRINT 'Database schema updated successfully for your existing tables!'
+PRINT 'Your existing data has been preserved and enhanced.'
+PRINT 'Admin login: admin / admin123'
+PRINT 'You can now run your admin panel application.'
