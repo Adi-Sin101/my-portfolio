@@ -103,50 +103,81 @@ namespace adminpanel
                 try
                 {
                     con.Open();
-                    string query = "SELECT Degree, Institution, Year, Grade FROM Education WHERE IsActive = 1 ORDER BY StartYear DESC";
-                    SqlDataAdapter da = new SqlDataAdapter(query, con);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-                    
-                    if (dt.Rows.Count == 0)
-                    {
-                        // Add sample education data
-                        dt.Columns.Add("Degree");
-                        dt.Columns.Add("Institution");
-                        dt.Columns.Add("Year");
-                        dt.Columns.Add("Grade");
-                        
-                        DataRow row1 = dt.NewRow();
-                        row1["Degree"] = "B.Sc in Computer Science";
-                        row1["Institution"] = "Khulna University of Engineering & Technology";
-                        row1["Year"] = "Expected: 2027";
-                        row1["Grade"] = "CGPA: 3.28 / 4.00";
-                        dt.Rows.Add(row1);
-                        
-                        DataRow row2 = dt.NewRow();
-                        row2["Degree"] = "HSC";
-                        row2["Institution"] = "Khulna Govt. Girls' College";
-                        row2["Year"] = "2021";
-                        row2["Grade"] = "GPA: 5.00";
-                        dt.Rows.Add(row2);
-                        
-                        DataRow row3 = dt.NewRow();
-                        row3["Degree"] = "SSC";
-                        row3["Institution"] = "Govt. Coronation Secondary Girls' School";
-                        row3["Year"] = "2019";
-                        row3["Grade"] = "GPA: 5.00";
-                        dt.Rows.Add(row3);
-                    }
-                    
-                    rptEducation.DataSource = dt;
-                    rptEducation.DataBind();
-                }
-                catch (Exception ex)
-                {
-                    // Handle error
-                }
+                    // Check if IsActive column exists
+                    string checkQuery = @"SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS 
+                                WHERE TABLE_NAME = 'Education' AND COLUMN_NAME = 'IsActive'";
+            SqlCommand checkCmd = new SqlCommand(checkQuery, con);
+            int hasIsActive = (int)checkCmd.ExecuteScalar();
+            
+            string query;
+            if (hasIsActive > 0)
+            {
+                query = "SELECT Degree, Institution, Year, Grade FROM Education WHERE IsActive = 1 ORDER BY StartYear DESC";
             }
+            else
+            {
+                // Use basic query without IsActive column
+                query = "SELECT Degree, Institution, Year, Grade FROM Education ORDER BY Id DESC";
+            }
+            
+            SqlDataAdapter da = new SqlDataAdapter(query, con);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+            
+            if (dt.Rows.Count == 0)
+            {
+                // Add sample education data
+                dt.Columns.Add("Degree");
+                dt.Columns.Add("Institution");
+                dt.Columns.Add("Year");
+                dt.Columns.Add("Grade");
+                
+                DataRow row1 = dt.NewRow();
+                row1["Degree"] = "B.Sc in Computer Science";
+                row1["Institution"] = "Khulna University of Engineering & Technology";
+                row1["Year"] = "Expected: 2027";
+                row1["Grade"] = "CGPA: 3.28 / 4.00";
+                dt.Rows.Add(row1);
+                
+                DataRow row2 = dt.NewRow();
+                row2["Degree"] = "HSC";
+                row2["Institution"] = "Khulna Govt. Girls' College";
+                row2["Year"] = "2021";
+                row2["Grade"] = "GPA: 5.00";
+                dt.Rows.Add(row2);
+                
+                DataRow row3 = dt.NewRow();
+                row3["Degree"] = "SSC";
+                row3["Institution"] = "Govt. Coronation Secondary Girls' School";
+                row3["Year"] = "2019";
+                row3["Grade"] = "GPA: 5.00";
+                dt.Rows.Add(row3);
+            }
+            
+            rptEducation.DataSource = dt;
+            rptEducation.DataBind();
         }
+        catch (Exception ex)
+        {
+            // Handle error with sample data
+            DataTable errorDt = new DataTable();
+            errorDt.Columns.Add("Degree");
+            errorDt.Columns.Add("Institution");
+            errorDt.Columns.Add("Year");
+            errorDt.Columns.Add("Grade");
+            
+            DataRow errorRow = errorDt.NewRow();
+            errorRow["Degree"] = "Error loading education";
+            errorRow["Institution"] = ex.Message;
+            errorRow["Year"] = "N/A";
+            errorRow["Grade"] = "N/A";
+            errorDt.Rows.Add(errorRow);
+            
+            rptEducation.DataSource = errorDt;
+            rptEducation.DataBind();
+        }
+    }
+}
 
         private void LoadSkills()
         {
@@ -155,10 +186,68 @@ namespace adminpanel
                 try
                 {
                     con.Open();
-                    string query = "SELECT Name, IconUrl, Percentage FROM Skills WHERE IsActive = 1 ORDER BY DisplayOrder, Name";
+                    // Check if columns exist first
+                    string checkColumnsQuery = @"SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS 
+                                       WHERE TABLE_NAME = 'Skills' AND COLUMN_NAME IN ('IsActive', 'DisplayOrder', 'Percentage', 'IconUrl')";
+                    SqlCommand checkCmd = new SqlCommand(checkColumnsQuery, con);
+                    int columnsExist = (int)checkCmd.ExecuteScalar();
+                    
+                    string query;
+                    if (columnsExist >= 2) // At least some of the columns exist
+                    {
+                        query = @"SELECT Name, 
+                                COALESCE(IconUrl, 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg') as IconUrl, 
+                                COALESCE(Percentage, 75) as Percentage 
+                        FROM Skills 
+                        ORDER BY COALESCE(DisplayOrder, 0), Name";
+                    }
+                    else
+                    {
+                        // Basic query for original table structure
+                        query = "SELECT Name FROM Skills ORDER BY Name";
+                    }
+                    
                     SqlDataAdapter da = new SqlDataAdapter(query, con);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
+                    
+                    // Add missing columns if needed
+                    if (!dt.Columns.Contains("IconUrl"))
+                    {
+                        dt.Columns.Add("IconUrl", typeof(string));
+                    }
+                    if (!dt.Columns.Contains("Percentage"))
+                    {
+                        dt.Columns.Add("Percentage", typeof(int));
+                    }
+                    
+                    // Fill missing data
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        if (row["IconUrl"] == DBNull.Value || string.IsNullOrEmpty(row["IconUrl"].ToString()))
+                        {
+                            string skillName = row["Name"].ToString().ToLower();
+                            if (skillName.Contains("html"))
+                                row["IconUrl"] = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg";
+                            else if (skillName.Contains("css"))
+                                row["IconUrl"] = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg";
+                            else if (skillName.Contains("javascript") || skillName.Contains("js"))
+                                row["IconUrl"] = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg";
+                            else if (skillName.Contains("react"))
+                                row["IconUrl"] = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg";
+                            else if (skillName.Contains("python"))
+                                row["IconUrl"] = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg";
+                            else if (skillName.Contains("java"))
+                                row["IconUrl"] = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg";
+                            else
+                                row["IconUrl"] = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg";
+                        }
+                        
+                        if (row["Percentage"] == DBNull.Value || Convert.ToInt32(row["Percentage"]) == 0)
+                        {
+                            row["Percentage"] = 75; // Default percentage
+                        }
+                    }
                     
                     if (dt.Rows.Count == 0)
                     {
@@ -191,61 +280,105 @@ namespace adminpanel
                 }
                 catch (Exception ex)
                 {
-                    // Handle error
+                    // Handle error with sample data
+                    DataTable errorDt = new DataTable();
+                    errorDt.Columns.Add("Name");
+                    errorDt.Columns.Add("IconUrl");
+                    errorDt.Columns.Add("Percentage");
+                    
+                    DataRow errorRow = errorDt.NewRow();
+                    errorRow["Name"] = "Error: " + ex.Message;
+                    errorRow["IconUrl"] = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg";
+                    errorRow["Percentage"] = 0;
+                    errorDt.Rows.Add(errorRow);
+                    
+                    rptSkills.DataSource = errorDt;
+                    rptSkills.DataBind();
                 }
             }
         }
 
         private void LoadExperience()
         {
-            using (SqlConnection con = new SqlConnection(cs))
+            try
             {
-                try
+                using (SqlConnection con = new SqlConnection(cs))
                 {
                     con.Open();
-                    string query = "SELECT Title, Company, Duration, Description, ImagePath FROM Experience WHERE IsActive = 1 ORDER BY StartDate DESC";
+                    
+                    string query = @"SELECT Title, Company, StartDate, EndDate, Description, ImagePath 
+                                   FROM Experience 
+                                   ORDER BY Id DESC";
+                    
                     SqlDataAdapter da = new SqlDataAdapter(query, con);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
                     
-                    if (dt.Rows.Count == 0)
+                    // Process the data for display
+                    DataTable displayTable = new DataTable();
+                    displayTable.Columns.Add("Title");
+                    displayTable.Columns.Add("Company");
+                    displayTable.Columns.Add("Duration");
+                    displayTable.Columns.Add("Description");
+                    displayTable.Columns.Add("ImagePath");
+                    
+                    foreach (DataRow row in dt.Rows)
                     {
-                        // Add sample experience data
-                        dt.Columns.Add("Title");
-                        dt.Columns.Add("Company");
-                        dt.Columns.Add("Duration");
-                        dt.Columns.Add("Description");
-                        dt.Columns.Add("ImagePath");
+                        DataRow newRow = displayTable.NewRow();
+                        newRow["Title"] = row["Title"]?.ToString() ?? "";
+                        newRow["Company"] = row["Company"]?.ToString() ?? "";
+                        newRow["Description"] = row["Description"]?.ToString() ?? "";
                         
-                        var experiences = new[]
-                        {
-                            new { Title = "Campus Ambassador", Company = "She-STEM", Duration = "Aug 2025 - Present", 
-                                  Description = "Serving as the She-STEM Campus Ambassador at KUET, promoting STEM education among female students.", 
-                                  Image = "SheStem.jpg" },
-                            new { Title = "Assistant Operations Secretary", Company = "KUET Business and Entrepreneurship Club", Duration = "April 2024 – Present", 
-                                  Description = "Responsible for strategic planning and execution of club initiatives, events, workshops, and competitions.", 
-                                  Image = "KBEC_member.jpg" }
-                        };
+                        // Handle ImagePath
+                        string imagePath = row["ImagePath"]?.ToString();
+                        newRow["ImagePath"] = string.IsNullOrEmpty(imagePath) ? "default-experience.png" : imagePath;
                         
-                        foreach (var exp in experiences)
+                        // Calculate Duration from dates
+                        string startDateStr = row["StartDate"]?.ToString();
+                        string endDateStr = row["EndDate"]?.ToString();
+                        string duration = "Duration not specified";
+                        
+                        if (!string.IsNullOrEmpty(startDateStr))
                         {
-                            DataRow row = dt.NewRow();
-                            row["Title"] = exp.Title;
-                            row["Company"] = exp.Company;
-                            row["Duration"] = exp.Duration;
-                            row["Description"] = exp.Description;
-                            row["ImagePath"] = exp.Image;
-                            dt.Rows.Add(row);
+                            try
+                            {
+                                DateTime startDate = DateTime.Parse(startDateStr);
+                                duration = startDate.ToString("MMM yyyy");
+                                
+                                if (!string.IsNullOrEmpty(endDateStr))
+                                {
+                                    DateTime endDate = DateTime.Parse(endDateStr);
+                                    duration += " - " + endDate.ToString("MMM yyyy");
+                                }
+                                else
+                                {
+                                    duration += " - Present";
+                                }
+                            }
+                            catch
+                            {
+                                duration = startDateStr + (!string.IsNullOrEmpty(endDateStr) ? " - " + endDateStr : " - Present");
+                            }
                         }
+                        
+                        newRow["Duration"] = duration;
+                        displayTable.Rows.Add(newRow);
                     }
                     
-                    rptExperience.DataSource = dt;
+                    // Always bind the data
+                    rptExperience.DataSource = displayTable;
                     rptExperience.DataBind();
+                    
+                    // Show/hide the no data message
+                    noExperience.Visible = displayTable.Rows.Count == 0;
                 }
-                catch (Exception ex)
-                {
-                    // Handle error
-                }
+            }
+            catch (Exception)
+            {
+                // If there's an error, show the no data message
+                rptExperience.DataSource = null;
+                rptExperience.DataBind();
+                noExperience.Visible = true;
             }
         }
 

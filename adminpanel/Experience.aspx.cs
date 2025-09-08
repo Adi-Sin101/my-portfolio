@@ -36,8 +36,7 @@ namespace adminpanel
                 try
                 {
                     con.Open();
-                    // Use only columns that exist in your table
-                    string query = "SELECT Id, Title, Company, StartDate, EndDate, Description, ImagePath FROM Experience ORDER BY StartDate DESC";
+                    string query = "SELECT Id, Title, Company, StartDate, EndDate, Description, ImagePath FROM Experience ORDER BY Id DESC";
                     SqlDataAdapter da = new SqlDataAdapter(query, con);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
@@ -46,21 +45,31 @@ namespace adminpanel
                     dt.Columns.Add("Duration", typeof(string));
                     foreach (DataRow row in dt.Rows)
                     {
-                        DateTime? startDate = row["StartDate"] != DBNull.Value ? (DateTime?)row["StartDate"] : null;
-                        DateTime? endDate = row["EndDate"] != DBNull.Value ? (DateTime?)row["EndDate"] : null;
+                        string startDateStr = row["StartDate"]?.ToString();
+                        string endDateStr = row["EndDate"]?.ToString();
                         
-                        if (startDate.HasValue)
+                        if (!string.IsNullOrEmpty(startDateStr))
                         {
-                            string duration = startDate.Value.ToString("MMM yyyy");
-                            if (endDate.HasValue)
+                            try
                             {
-                                duration += " - " + endDate.Value.ToString("MMM yyyy");
+                                DateTime startDate = Convert.ToDateTime(startDateStr);
+                                string duration = startDate.ToString("MMM yyyy");
+                                
+                                if (!string.IsNullOrEmpty(endDateStr))
+                                {
+                                    DateTime endDate = Convert.ToDateTime(endDateStr);
+                                    duration += " - " + endDate.ToString("MMM yyyy");
+                                }
+                                else
+                                {
+                                    duration += " - Present";
+                                }
+                                row["Duration"] = duration;
                             }
-                            else
+                            catch
                             {
-                                duration += " - Present";
+                                row["Duration"] = startDateStr + (string.IsNullOrEmpty(endDateStr) ? " - Present" : " - " + endDateStr);
                             }
-                            row["Duration"] = duration;
                         }
                         else
                         {
@@ -70,6 +79,8 @@ namespace adminpanel
                     
                     gvExperience.DataSource = dt;
                     gvExperience.DataBind();
+                    
+                    ShowMessage($"Loaded {dt.Rows.Count} experience records successfully!", "success");
                 }
                 catch (Exception ex)
                 {
@@ -85,8 +96,8 @@ namespace adminpanel
                 string title = txtTitle.Text.Trim();
                 string company = txtCompany.Text.Trim();
                 string description = txtDescription.Text.Trim();
-                DateTime? startDate = string.IsNullOrEmpty(txtStartDate.Text) ? (DateTime?)null : Convert.ToDateTime(txtStartDate.Text);
-                DateTime? endDate = string.IsNullOrEmpty(txtEndDate.Text) ? (DateTime?)null : Convert.ToDateTime(txtEndDate.Text);
+                string startDate = txtStartDate.Text.Trim();
+                string endDate = txtEndDate.Text.Trim();
                 string imagePath = "default-experience.png"; // Default image
 
                 // Handle image upload
@@ -108,14 +119,13 @@ namespace adminpanel
                     try
                     {
                         con.Open();
-                        // Use only columns that exist in your table
                         string query = @"INSERT INTO Experience (Title, Company, StartDate, EndDate, Description, ImagePath) 
                                        VALUES (@title, @company, @startDate, @endDate, @description, @imagePath)";
                         SqlCommand cmd = new SqlCommand(query, con);
                         cmd.Parameters.AddWithValue("@title", title);
                         cmd.Parameters.AddWithValue("@company", company);
-                        cmd.Parameters.AddWithValue("@startDate", (object)startDate ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("@endDate", (object)endDate ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("@startDate", string.IsNullOrEmpty(startDate) ? (object)DBNull.Value : startDate);
+                        cmd.Parameters.AddWithValue("@endDate", string.IsNullOrEmpty(endDate) ? (object)DBNull.Value : endDate);
                         cmd.Parameters.AddWithValue("@description", description);
                         cmd.Parameters.AddWithValue("@imagePath", imagePath);
 
@@ -147,8 +157,8 @@ namespace adminpanel
                 string title = txtTitle.Text.Trim();
                 string company = txtCompany.Text.Trim();
                 string description = txtDescription.Text.Trim();
-                DateTime? startDate = string.IsNullOrEmpty(txtStartDate.Text) ? (DateTime?)null : Convert.ToDateTime(txtStartDate.Text);
-                DateTime? endDate = string.IsNullOrEmpty(txtEndDate.Text) ? (DateTime?)null : Convert.ToDateTime(txtEndDate.Text);
+                string startDate = txtStartDate.Text.Trim();
+                string endDate = txtEndDate.Text.Trim();
                 string imagePath = hdnCurrentImagePath.Value;
 
                 // Handle image upload
@@ -175,15 +185,14 @@ namespace adminpanel
                     try
                     {
                         con.Open();
-                        // Use only columns that exist in your table
                         string query = @"UPDATE Experience SET Title = @title, Company = @company, 
                                        StartDate = @startDate, EndDate = @endDate, Description = @description, ImagePath = @imagePath 
                                        WHERE Id = @id";
                         SqlCommand cmd = new SqlCommand(query, con);
                         cmd.Parameters.AddWithValue("@title", title);
                         cmd.Parameters.AddWithValue("@company", company);
-                        cmd.Parameters.AddWithValue("@startDate", (object)startDate ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("@endDate", (object)endDate ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("@startDate", string.IsNullOrEmpty(startDate) ? (object)DBNull.Value : startDate);
+                        cmd.Parameters.AddWithValue("@endDate", string.IsNullOrEmpty(endDate) ? (object)DBNull.Value : endDate);
                         cmd.Parameters.AddWithValue("@description", description);
                         cmd.Parameters.AddWithValue("@imagePath", imagePath);
                         cmd.Parameters.AddWithValue("@id", experienceId);
@@ -236,7 +245,7 @@ namespace adminpanel
                 try
                 {
                     con.Open();
-                    string query = "SELECT * FROM Experience WHERE Id = @id";
+                    string query = "SELECT Id, Title, Company, StartDate, EndDate, Description, ImagePath FROM Experience WHERE Id = @id";
                     SqlCommand cmd = new SqlCommand(query, con);
                     cmd.Parameters.AddWithValue("@id", experienceId);
                     
@@ -246,14 +255,36 @@ namespace adminpanel
                         hdnExperienceId.Value = reader["Id"].ToString();
                         txtTitle.Text = reader["Title"].ToString();
                         txtCompany.Text = reader["Company"].ToString();
-                        txtDuration.Text = reader["Duration"].ToString();
                         txtDescription.Text = reader["Description"].ToString();
                         
-                        if (reader["StartDate"] != DBNull.Value)
-                            txtStartDate.Text = Convert.ToDateTime(reader["StartDate"]).ToString("yyyy-MM-dd");
+                        string startDateStr = reader["StartDate"]?.ToString();
+                        string endDateStr = reader["EndDate"]?.ToString();
                         
-                        if (reader["EndDate"] != DBNull.Value)
-                            txtEndDate.Text = Convert.ToDateTime(reader["EndDate"]).ToString("yyyy-MM-dd");
+                        if (!string.IsNullOrEmpty(startDateStr))
+                        {
+                            try
+                            {
+                                DateTime startDate = Convert.ToDateTime(startDateStr);
+                                txtStartDate.Text = startDate.ToString("yyyy-MM-dd");
+                            }
+                            catch
+                            {
+                                txtStartDate.Text = "";
+                            }
+                        }
+                        
+                        if (!string.IsNullOrEmpty(endDateStr))
+                        {
+                            try
+                            {
+                                DateTime endDate = Convert.ToDateTime(endDateStr);
+                                txtEndDate.Text = endDate.ToString("yyyy-MM-dd");
+                            }
+                            catch
+                            {
+                                txtEndDate.Text = "";
+                            }
+                        }
                         
                         string imagePath = reader["ImagePath"].ToString();
                         hdnCurrentImagePath.Value = imagePath;
@@ -368,7 +399,7 @@ namespace adminpanel
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Log error but don't show to user as it's not critical
             }

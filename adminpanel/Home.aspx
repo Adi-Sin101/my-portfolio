@@ -114,7 +114,7 @@
                 <asp:Repeater ID="rptExperience" runat="server">
                     <ItemTemplate>
                         <div class="experience-card">
-                            <img src="<%# Eval("ImagePath") %>" alt="<%# Eval("Title") %>">
+                            <img src="<%# Eval("ImagePath") %>" alt="<%# Eval("Title") %>" onerror="this.src='default-experience.png';">
                             <div class="experience-content">
                                 <h4><%# Eval("Title") %></h4>
                                 <p class="company"><%# Eval("Company") %> | <%# Eval("Duration") %></p>
@@ -123,6 +123,11 @@
                         </div>
                     </ItemTemplate>
                 </asp:Repeater>
+            </div>
+            <!-- Fallback if no data -->
+            <div id="noExperience" runat="server" visible="false" style="text-align: center; padding: 40px; color: #a78bfa;">
+                <h4>No Experience Records Found</h4>
+                <p>Experience data will appear here once added through the admin panel.</p>
             </div>
         </section>
 
