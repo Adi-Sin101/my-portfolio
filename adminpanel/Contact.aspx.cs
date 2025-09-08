@@ -6,7 +6,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data.SqlClient;
 using System.Configuration;
-using System.Text;
+using System.Net.Mail;
+using System.Net;
 
 namespace adminpanel
 {
@@ -16,150 +17,171 @@ namespace adminpanel
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Check if user is authenticated
-            if (Session["AdminUser"] == null)
-            {
-                Response.Redirect("Login.aspx");
-            }
-
+            // No authentication required for contact page - it's public
             if (!IsPostBack)
             {
                 LoadContactInfo();
             }
         }
 
+        protected void BtnSendMessage_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string name = txtContactName.Text.Trim();
+                string email = txtContactEmail.Text.Trim();
+                string subject = txtContactSubject.Text.Trim();
+                string message = txtContactMessage.Text.Trim();
+
+                // Basic validation
+                if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(message))
+                {
+                    ShowMessage("Please fill in all required fields.", "error");
+                    return;
+                }
+
+                // Save to database
+                bool saved = SaveContactMessage(name, email, subject, message);
+
+                if (saved)
+                {
+                    // Clear form
+                    txtContactName.Text = "";
+                    txtContactEmail.Text = "";
+                    txtContactSubject.Text = "";
+                    txtContactMessage.Text = "";
+
+                    ShowMessage("Thank you for your message! I'll get back to you soon.", "success");
+                }
+                else
+                {
+                    ShowMessage("There was an error sending your message. Please try again.", "error");
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowMessage("An error occurred: " + ex.Message, "error");
+            }
+        }
+
+        private bool SaveContactMessage(string name, string email, string subject, string message)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(cs))
+                {
+                    con.Open();
+
+                    // Ensure ContactMessages table exists
+                    EnsureContactMessagesTableExists(con);
+
+                    // Insert the message
+                    string query = @"INSERT INTO ContactMessages (Name, Email, Subject, Message, DateReceived, IsRead) 
+                                   VALUES (@name, @email, @subject, @message, GETDATE(), 0)";
+
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.Parameters.AddWithValue("@name", name);
+                    cmd.Parameters.AddWithValue("@email", email);
+                    cmd.Parameters.AddWithValue("@subject", subject);
+                    cmd.Parameters.AddWithValue("@message", message);
+
+                    int result = cmd.ExecuteNonQuery();
+                    return result > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log error but don't expose details to user
+                System.Diagnostics.Debug.WriteLine("Error saving contact message: " + ex.Message);
+                return false;
+            }
+        }
+
+        private void EnsureContactMessagesTableExists(SqlConnection con)
+        {
+            string createTableQuery = @"
+                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='ContactMessages' AND xtype='U')
+                CREATE TABLE ContactMessages (
+                    Id INT IDENTITY(1,1) PRIMARY KEY,
+                    Name NVARCHAR(100) NOT NULL,
+                    Email NVARCHAR(100) NOT NULL,
+                    Subject NVARCHAR(200) NULL,
+                    Message NVARCHAR(MAX) NOT NULL,
+                    DateReceived DATETIME DEFAULT GETDATE(),
+                    IsRead BIT DEFAULT 0
+                )";
+
+            SqlCommand createCmd = new SqlCommand(createTableQuery, con);
+            createCmd.ExecuteNonQuery();
+        }
+
         private void LoadContactInfo()
         {
+            // Load contact information from database to populate the contact cards
             using (SqlConnection con = new SqlConnection(cs))
             {
                 try
                 {
                     con.Open();
-                    string query = "SELECT TOP 1 * FROM PersonalInfo WHERE IsActive = 1 ORDER BY CreatedDate DESC";
+
+                    // Try to get from HomeContent table
+                    string query = "SELECT TOP 1 * FROM HomeContent ORDER BY Id DESC";
                     SqlCommand cmd = new SqlCommand(query, con);
                     SqlDataReader reader = cmd.ExecuteReader();
-                    
+
                     if (reader.Read())
                     {
-                        StringBuilder html = new StringBuilder();
-                        
-                        // Current contact info display
-                        html.Append("<div class='row'>");
-                        html.Append("<div class='col-md-6'>");
-                        
-                        html.Append("<div class='contact-info-item'>");
-                        html.Append("<div class='contact-info-label'>Email Address</div>");
-                        html.AppendFormat("<div>{0}</div>", reader["Email"]);
-                        html.Append("</div>");
-                        
-                        html.Append("<div class='contact-info-item'>");
-                        html.Append("<div class='contact-info-label'>Phone Number</div>");
-                        html.AppendFormat("<div>{0}</div>", reader["Phone"]);
-                        html.Append("</div>");
-                        
-                        html.Append("</div>");
-                        html.Append("<div class='col-md-6'>");
-                        
-                        html.Append("<div class='contact-info-item'>");
-                        html.Append("<div class='contact-info-label'>GitHub Profile</div>");
-                        html.AppendFormat("<div><a href='{0}' target='_blank'>{1}</a></div>", reader["GitHubUrl"], reader["GitHubText"]);
-                        html.Append("</div>");
-                        
-                        html.Append("<div class='contact-info-item'>");
-                        html.Append("<div class='contact-info-label'>LinkedIn Profile</div>");
-                        html.AppendFormat("<div><a href='{0}' target='_blank'>{1}</a></div>", reader["LinkedInUrl"], reader["LinkedInText"]);
-                        html.Append("</div>");
-                        
-                        html.Append("</div>");
-                        html.Append("</div>");
-                        
-                        ltlContactInfo.Text = html.ToString();
-                        
-                        // Portfolio preview
-                        StringBuilder previewHtml = new StringBuilder();
-                        previewHtml.Append("<div style='text-align: center; margin-bottom: 20px;'>");
-                        previewHtml.Append("<h3 style='margin-bottom: 10px;'>Contact Me</h3>");
-                        previewHtml.Append("<div style='width: 60px; height: 4px; background: #2563eb; margin: 0 auto 20px;'></div>");
-                        previewHtml.Append("</div>");
-                        
-                        previewHtml.Append("<div class='row'>");
-                        
-                        // Email box
-                        previewHtml.Append("<div class='col-md-6 mb-3'>");
-                        previewHtml.Append("<div class='contact-box-preview'>");
-                        previewHtml.Append("<div class='contact-icon-preview'>📧</div>");
-                        previewHtml.Append("<strong>Email:</strong><br>");
-                        previewHtml.AppendFormat("<a href='mailto:{0}'>{0}</a>", reader["Email"]);
-                        previewHtml.Append("</div>");
-                        previewHtml.Append("</div>");
-                        
-                        // Phone box
-                        previewHtml.Append("<div class='col-md-6 mb-3'>");
-                        previewHtml.Append("<div class='contact-box-preview'>");
-                        previewHtml.Append("<div class='contact-icon-preview'>📞</div>");
-                        previewHtml.Append("<strong>Phone:</strong><br>");
-                        previewHtml.AppendFormat("<a href='tel:{0}'>{0}</a>", reader["Phone"]);
-                        previewHtml.Append("</div>");
-                        previewHtml.Append("</div>");
-                        
-                        // LinkedIn box
-                        previewHtml.Append("<div class='col-md-6 mb-3'>");
-                        previewHtml.Append("<div class='contact-box-preview'>");
-                        previewHtml.Append("<div class='contact-icon-preview'>💼</div>");
-                        previewHtml.Append("<strong>LinkedIn:</strong><br>");
-                        previewHtml.AppendFormat("<a href='{0}' target='_blank'>{1}</a>", reader["LinkedInUrl"], reader["LinkedInText"]);
-                        previewHtml.Append("</div>");
-                        previewHtml.Append("</div>");
-                        
-                        // GitHub box
-                        previewHtml.Append("<div class='col-md-6 mb-3'>");
-                        previewHtml.Append("<div class='contact-box-preview'>");
-                        previewHtml.Append("<div class='contact-icon-preview'>💻</div>");
-                        previewHtml.Append("<strong>GitHub:</strong><br>");
-                        previewHtml.AppendFormat("<a href='{0}' target='_blank'>{1}</a>", reader["GitHubUrl"], reader["GitHubText"]);
-                        previewHtml.Append("</div>");
-                        previewHtml.Append("</div>");
-                        
-                        previewHtml.Append("</div>");
-                        
-                        ltlContactPreview.Text = previewHtml.ToString();
-                    }
-                    else
-                    {
-                        ltlContactInfo.Text = "<div class='alert alert-warning'><strong>No contact information found.</strong><br/>Please go to the About section to add your personal information.</div>";
-                        ltlContactPreview.Text = "<p class='text-center text-muted'>No contact information available for preview.</p>";
+                        // Update contact card links with database values
+                        hlnkContactEmailCard.NavigateUrl = "mailto:" + reader["Email"].ToString();
+                        hlnkContactEmailCard.Text = reader["Email"].ToString();
+
+                        hlnkContactLinkedInCard.NavigateUrl = reader["LinkedInUrl"].ToString();
+                        // Extract LinkedIn username from URL for display
+                        string linkedInUrl = reader["LinkedInUrl"].ToString();
+                        if (linkedInUrl.Contains("linkedin.com/in/"))
+                        {
+                            string username = linkedInUrl.Substring(linkedInUrl.LastIndexOf("/") + 1);
+                            hlnkContactLinkedInCard.Text = username;
+                        }
+
+                        hlnkContactGitHubCard.NavigateUrl = reader["GitHubUrl"].ToString();
+                        // Extract GitHub username from URL for display
+                        string gitHubUrl = reader["GitHubUrl"].ToString();
+                        if (gitHubUrl.Contains("github.com/"))
+                        {
+                            string username = gitHubUrl.Substring(gitHubUrl.LastIndexOf("/") + 1);
+                            hlnkContactGitHubCard.Text = username;
+                        }
                     }
                     reader.Close();
                 }
                 catch (Exception ex)
                 {
-                    ltlContactInfo.Text = "<div class='alert alert-danger'>Error loading contact information: " + ex.Message + "</div>";
-                    ltlContactPreview.Text = "<p class='text-center text-danger'>Error loading preview.</p>";
+                    // If there's an error, use default values
+                    System.Diagnostics.Debug.WriteLine("Error loading contact info: " + ex.Message);
                 }
             }
         }
 
-        protected void btnRefresh_Click(object sender, EventArgs e)
-        {
-            LoadContactInfo();
-            ShowMessage("Contact information refreshed successfully!", "success");
-        }
-
         private void ShowMessage(string message, string type)
         {
-            string alertClass = type == "success" ? "alert-success" : "alert-danger";
-            string script = $@"
-                var alertDiv = document.createElement('div');
-                alertDiv.className = 'alert {alertClass} alert-dismissible fade show';
-                alertDiv.innerHTML = '{message}<button type=""button"" class=""btn-close"" data-bs-dismiss=""alert""></button>';
-                document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.container').firstChild);
-                setTimeout(function() {{
-                    if (alertDiv.parentNode) {{
-                        alertDiv.parentNode.removeChild(alertDiv);
-                    }}
-                }}, 5000);
-            ";
-            ClientScript.RegisterStartupScript(this.GetType(), "ShowMessage", script, true);
+            lblMessage.Text = message;
+            lblMessage.CssClass = "contact-form-message " + type;
+            lblMessage.Visible = true;
+
+            // Auto-hide success messages after 5 seconds
+            if (type == "success")
+            {
+                string script = @"
+                    setTimeout(function() {
+                        var msg = document.getElementById('" + lblMessage.ClientID + @"');
+                        if (msg) {
+                            msg.style.display = 'none';
+                        }
+                    }, 5000);
+                ";
+                ClientScript.RegisterStartupScript(this.GetType(), "HideMessage", script, true);
+            }
         }
     }
 }

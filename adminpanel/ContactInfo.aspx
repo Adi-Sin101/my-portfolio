@@ -1,117 +1,143 @@
-﻿<%@ Page Title="Skills Management" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Skills.aspx.cs" Inherits="adminpanel.Skills" %>
+<%@ Page Title="Contact Information Management" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="ContactInfo.aspx.cs" Inherits="adminpanel.ContactInfo" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-    <!-- Portfolio-style Skills Management -->
-    <div class="skills-admin-container">
-        <div class="skills-admin-background"></div>
+    <!-- Portfolio-style Contact Info Management -->
+    <div class="contact-info-admin-container">
+        <div class="contact-info-admin-background"></div>
         
-        <div class="skills-admin-wrapper">
+        <div class="contact-info-admin-wrapper">
             <!-- Hero Section -->
             <div class="admin-hero-section">
                 <div class="admin-hero-content">
-                    <h1>Skills <span class="highlight">Management</span></h1>
-                    <div class="skills-divider-posh"></div>
-                    <p>Manage your technical skills and expertise levels</p>
+                    <h1>Contact Information <span class="highlight">Management</span></h1>
+                    <div class="contact-info-divider-posh"></div>
+                    <p>Manage your contact information and social links</p>
                 </div>
             </div>
 
-            <!-- Skills CRUD Section -->
-            <section class="skills-section admin-section">
-                <div class="skills-crud-card">
+            <!-- Contact Info CRUD Section -->
+            <section class="contact-info-section admin-section">
+                <div class="contact-info-crud-card">
                     <div class="card-header-modern">
-                        <h3><i class="fas fa-code"></i> Skills Dashboard</h3>
+                        <h3><i class="fas fa-address-card"></i> Contact Information Dashboard</h3>
                         <div class="header-actions">
-                            <asp:Button ID="btnRefreshSkills" runat="server" Text="Refresh" OnClick="btnRefreshSkills_Click" 
+                            <asp:Button ID="btnRefreshContactInfo" runat="server" Text="Refresh" OnClick="btnRefreshContactInfo_Click" 
                                 CssClass="btn light admin-btn" />
-                            <asp:Button ID="btnAddNewSkill" runat="server" Text="Add New Skill" OnClick="btnAddNewSkill_Click" 
+                            <asp:Button ID="btnAddNewContactInfo" runat="server" Text="Add New Contact" OnClick="btnAddNewContactInfo_Click" 
                                 CssClass="btn dark admin-btn" />
-                            <asp:Button ID="btnBulkActions" runat="server" Text="Bulk Actions" OnClick="btnBulkActions_Click" 
-                                CssClass="btn light admin-btn" />
                         </div>
                     </div>
                     
                     <div class="card-body-modern">
-                        <asp:Label ID="lblSkillsCount" runat="server" CssClass="skills-card-label skills-stats" Text="Loading skills..." />
+                        <asp:Label ID="lblContactInfoCount" runat="server" CssClass="contact-info-card-label contact-info-stats" Text="Loading contact info..." />
                         
-                        <div class="skills-grid-container">
-                            <asp:GridView ID="gvSkills" runat="server" 
+                        <div class="contact-info-grid-container">
+                            <asp:GridView ID="gvContactInfo" runat="server" 
                                 CssClass="modern-table" 
                                 AutoGenerateColumns="false" 
                                 AllowPaging="true" 
                                 PageSize="10"
-                                OnPageIndexChanging="gvSkills_PageIndexChanging"
-                                OnRowCommand="gvSkills_RowCommand"
-                                OnRowEditing="gvSkills_RowEditing"
-                                OnRowUpdating="gvSkills_RowUpdating"
-                                OnRowCancelingEdit="gvSkills_RowCancelingEdit"
-                                OnRowDeleting="gvSkills_RowDeleting"
-                                EmptyDataText="No skills found. Add your first skill!"
+                                OnPageIndexChanging="gvContactInfo_PageIndexChanging"
+                                OnRowCommand="gvContactInfo_RowCommand"
+                                OnRowEditing="gvContactInfo_RowEditing"
+                                OnRowUpdating="gvContactInfo_RowUpdating"
+                                OnRowCancelingEdit="gvContactInfo_RowCancelingEdit"
+                                OnRowDeleting="gvContactInfo_RowDeleting"
+                                EmptyDataText="No contact information found. Add your first contact info!"
                                 DataKeyNames="Id">
                                 <Columns>
                                     <asp:BoundField DataField="Id" HeaderText="ID" Visible="false" />
                                     
                                     <asp:TemplateField HeaderText="Icon" ItemStyle-CssClass="icon-column">
                                         <ItemTemplate>
-                                            <div class="skill-icon-preview">
-                                                <img src="<%# Eval("IconUrl") %>" alt="<%# Eval("Name") %>" class="skill-icon" onerror="this.src='https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg'" />
+                                            <div class="contact-info-icon-preview">
+                                                <i class="<%# Eval("icon_class") %>" style="font-size: 24px; color: #a78bfa;"></i>
                                             </div>
                                         </ItemTemplate>
                                         <EditItemTemplate>
-                                            <asp:TextBox ID="txtIconUrl" runat="server" Text='<%# Eval("IconUrl") %>' 
-                                                CssClass="modern-input" placeholder="Icon URL" />
+                                            <asp:TextBox ID="txtIconClass" runat="server" Text='<%# Eval("icon_class") %>' 
+                                                CssClass="modern-input" placeholder="fas fa-envelope" />
                                         </EditItemTemplate>
                                     </asp:TemplateField>
                                     
-                                    <asp:TemplateField HeaderText="Skill Name" ItemStyle-CssClass="name-column">
+                                    <asp:TemplateField HeaderText="Type" ItemStyle-CssClass="type-column">
                                         <ItemTemplate>
-                                            <div class="skill-name"><%# Eval("Name") %></div>
+                                            <div class="contact-type"><%# GetContactType(Eval("icon_class").ToString()) %></div>
+                                        </ItemTemplate>
+                                    </asp:TemplateField>
+                                    
+                                    <asp:TemplateField HeaderText="Email" ItemStyle-CssClass="email-column">
+                                        <ItemTemplate>
+                                            <div class="contact-email"><%# Eval("Email") %></div>
                                         </ItemTemplate>
                                         <EditItemTemplate>
-                                            <asp:TextBox ID="txtName" runat="server" Text='<%# Eval("Name") %>' 
-                                                CssClass="modern-input" MaxLength="100" />
-                                            <asp:RequiredFieldValidator ID="rfvName" runat="server" 
-                                                ControlToValidate="txtName" ErrorMessage="*" 
-                                                CssClass="validation-error" />
+                                            <asp:TextBox ID="txtEmail" runat="server" Text='<%# Eval("Email") %>' 
+                                                CssClass="modern-input" TextMode="Email" />
                                         </EditItemTemplate>
                                     </asp:TemplateField>
                                     
-                                    <asp:TemplateField HeaderText="Proficiency" ItemStyle-CssClass="level-column">
+                                    <asp:TemplateField HeaderText="LinkedIn" ItemStyle-CssClass="linkedin-column">
                                         <ItemTemplate>
-                                            <div class="skill-level-display">
-                                                <div class="progress-container">
-                                                    <div class="progress-bar-modern" style="width: <%# Eval("Percentage") %>%;">
-                                                        <span class="progress-text"><%# Eval("Percentage") %>%</span>
-                                                    </div>
-                                                </div>
-                                                <div class="skill-level-label"><%# GetSkillLevel(Convert.ToInt32(Eval("Percentage"))) %></div>
+                                            <div class="contact-linkedin">
+                                                <asp:HyperLink ID="hlnkLinkedIn" runat="server" 
+                                                    NavigateUrl='<%# Eval("LinkedIn") %>' Target="_blank"
+                                                    Text='<%# !string.IsNullOrEmpty(Eval("LinkedIn").ToString()) ? "View Profile" : "Not Set" %>'
+                                                    Visible='<%# !string.IsNullOrEmpty(Eval("LinkedIn").ToString()) %>' />
+                                                <span runat="server" visible='<%# string.IsNullOrEmpty(Eval("LinkedIn").ToString()) %>'>Not Set</span>
                                             </div>
                                         </ItemTemplate>
                                         <EditItemTemplate>
-                                            <asp:TextBox ID="txtPercentage" runat="server" Text='<%# Eval("Percentage") %>' 
-                                                CssClass="modern-input small" TextMode="Number" min="0" max="100" placeholder="75" />
+                                            <asp:TextBox ID="txtLinkedIn" runat="server" Text='<%# Eval("LinkedIn") %>' 
+                                                CssClass="modern-input" placeholder="https://linkedin.com/in/username" />
+                                        </EditItemTemplate>
+                                    </asp:TemplateField>
+                                    
+                                    <asp:TemplateField HeaderText="GitHub" ItemStyle-CssClass="github-column">
+                                        <ItemTemplate>
+                                            <div class="contact-github">
+                                                <asp:HyperLink ID="hlnkGitHub" runat="server" 
+                                                    NavigateUrl='<%# Eval("GitHub") %>' Target="_blank"
+                                                    Text='<%# !string.IsNullOrEmpty(Eval("GitHub").ToString()) ? "View Profile" : "Not Set" %>'
+                                                    Visible='<%# !string.IsNullOrEmpty(Eval("GitHub").ToString()) %>' />
+                                                <span runat="server" visible='<%# string.IsNullOrEmpty(Eval("GitHub").ToString()) %>'>Not Set</span>
+                                            </div>
+                                        </ItemTemplate>
+                                        <EditItemTemplate>
+                                            <asp:TextBox ID="txtGitHub" runat="server" Text='<%# Eval("GitHub") %>' 
+                                                CssClass="modern-input" placeholder="https://github.com/username" />
+                                        </EditItemTemplate>
+                                    </asp:TemplateField>
+                                    
+                                    <asp:TemplateField HeaderText="Phone" ItemStyle-CssClass="phone-column">
+                                        <ItemTemplate>
+                                            <div class="contact-phone"><%# Eval("Phone") %></div>
+                                        </ItemTemplate>
+                                        <EditItemTemplate>
+                                            <asp:TextBox ID="txtPhone" runat="server" Text='<%# Eval("Phone") %>' 
+                                                CssClass="modern-input" placeholder="+1 (555) 123-4567" />
                                         </EditItemTemplate>
                                     </asp:TemplateField>
                                     
                                     <asp:TemplateField HeaderText="Order" ItemStyle-CssClass="order-column">
                                         <ItemTemplate>
-                                            <div class="display-order"><%# Eval("DisplayOrder") %></div>
+                                            <div class="display-order"><%# Eval("display_order") %></div>
                                         </ItemTemplate>
                                         <EditItemTemplate>
-                                            <asp:TextBox ID="txtDisplayOrder" runat="server" Text='<%# Eval("DisplayOrder") %>' 
-                                                CssClass="modern-input small" TextMode="Number" placeholder="1" />
+                                            <asp:TextBox ID="txtDisplayOrder" runat="server" Text='<%# Eval("display_order") %>' 
+                                                CssClass="modern-input small" TextMode="Number" />
                                         </EditItemTemplate>
                                     </asp:TemplateField>
                                     
                                     <asp:TemplateField HeaderText="Actions" ItemStyle-CssClass="actions-column">
                                         <ItemTemplate>
                                             <div class="action-buttons">
-                                                <asp:Button ID="btnView" runat="server" Text="View" CommandName="ViewSkill" 
+                                                <asp:Button ID="btnView" runat="server" Text="View" CommandName="ViewContactInfo" 
                                                     CommandArgument='<%# Eval("Id") %>' CssClass="action-btn view-btn" />
                                                 <asp:Button ID="btnEdit" runat="server" Text="Edit" CommandName="Edit" 
                                                     CssClass="action-btn edit-btn" />
                                                 <asp:Button ID="btnDelete" runat="server" Text="Delete" CommandName="Delete" 
                                                     CssClass="action-btn delete-btn"
-                                                    OnClientClick="return confirm('Are you sure you want to delete this skill?');" />
+                                                    OnClientClick="return confirm('Are you sure you want to delete this contact info?');" />
                                             </div>
                                         </ItemTemplate>
                                         <EditItemTemplate>
@@ -130,31 +156,16 @@
                 </div>
             </section>
 
-            <!-- Skills Preview Section -->
-            <section class="skills-section admin-section">
-                <div class="skills-preview-card">
+            <!-- Contact Preview Section -->
+            <section class="contact-info-section admin-section">
+                <div class="contact-info-preview-card">
                     <div class="card-header-modern">
                         <h3><i class="fas fa-eye"></i> Portfolio Preview</h3>
                     </div>
                     <div class="card-body-modern">
                         <div class="portfolio-preview-container">
-                            <h4 style="text-align: center; margin-bottom: 30px; color: #ffffff;">How Your Skills Appear on Portfolio</h4>
-                            <asp:Literal ID="ltlSkillsPreview" runat="server" />
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Quick Stats Section -->
-            <section class="skills-section admin-section">
-                <div class="info-card">
-                    <div class="info-content">
-                        <div class="info-icon">
-                            <i class="fas fa-chart-bar"></i>
-                        </div>
-                        <div class="info-text">
-                            <h4>Skills Statistics</h4>
-                            <asp:Literal ID="ltlSkillsStats" runat="server" />
+                            <h4 style="text-align: center; margin-bottom: 30px; color: #ffffff;">How Your Contact Info Appears on Portfolio</h4>
+                            <asp:Literal ID="ltlContactInfoPreview" runat="server" />
                         </div>
                     </div>
                 </div>
@@ -162,83 +173,90 @@
         </div>
     </div>
 
-    <!-- Modal for Skill Details/Add/Edit -->
-    <div class="modal-overlay" id="skillModal" style="display: none;">
+    <!-- Modal for Contact Info Details/Add/Edit -->
+    <div class="modal-overlay" id="contactInfoModal" style="display: none;">
         <div class="modal-container">
             <div class="modal-header-modern">
                 <h3>
-                    <asp:Literal ID="ltlModalTitle" runat="server" Text="Skill Details" />
+                    <asp:Literal ID="ltlModalTitle" runat="server" Text="Contact Information Details" />
                 </h3>
-                <button type="button" class="modal-close-btn" onclick="closeSkillModal()">
+                <button type="button" class="modal-close-btn" onclick="closeContactInfoModal()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
             <div class="modal-body-modern">
-                <asp:Panel ID="pnlSkillForm" runat="server" Visible="false">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="modern-label">Skill Name *</label>
-                            <asp:TextBox ID="txtModalSkillName" runat="server" CssClass="modern-input" MaxLength="100" placeholder="e.g., JavaScript" />
-                            <asp:RequiredFieldValidator ID="rfvModalSkillName" runat="server" 
-                                ControlToValidate="txtModalSkillName" ErrorMessage="Skill name is required" 
-                                CssClass="validation-error" ValidationGroup="SkillForm" />
-                        </div>
-                        <div class="form-group">
-                            <label class="modern-label">Proficiency Level (%)</label>
-                            <asp:TextBox ID="txtModalPercentage" runat="server" CssClass="modern-input" TextMode="Number" 
-                                min="0" max="100" placeholder="75" />
-                            <asp:RangeValidator ID="rvModalPercentage" runat="server" 
-                                ControlToValidate="txtModalPercentage" MinimumValue="0" MaximumValue="100" 
-                                Type="Integer" ErrorMessage="Percentage must be between 0 and 100" 
-                                CssClass="validation-error" ValidationGroup="SkillForm" />
-                        </div>
-                    </div>
+                <asp:Panel ID="pnlContactInfoForm" runat="server" Visible="false">
                     <div class="form-group">
-                        <label class="modern-label">Icon URL</label>
-                        <asp:TextBox ID="txtModalIconUrl" runat="server" CssClass="modern-input" 
-                            placeholder="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" />
-                        <div class="icon-preview" id="iconPreview" style="display: none; margin-top: 10px; text-align: center;">
-                            <img id="previewImg" src="" alt="Icon Preview" style="width: 48px; height: 48px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);" />
-                        </div>
-                        <small class="form-hint">Leave empty to auto-generate based on skill name</small>
+                        <label class="modern-label">Email Address *</label>
+                        <asp:TextBox ID="txtModalEmail" runat="server" CssClass="modern-input" TextMode="Email" placeholder="your.email@example.com" />
+                        <asp:RequiredFieldValidator ID="rfvModalEmail" runat="server" 
+                            ControlToValidate="txtModalEmail" ErrorMessage="Email is required" 
+                            CssClass="validation-error" ValidationGroup="ContactInfoForm" />
+                        <small class="form-hint">This email will be used for contact form submissions</small>
                     </div>
+                    
                     <div class="form-grid">
+                        <div class="form-group">
+                            <label class="modern-label">LinkedIn Profile URL</label>
+                            <asp:TextBox ID="txtModalLinkedIn" runat="server" CssClass="modern-input" 
+                                placeholder="https://linkedin.com/in/your-profile" />
+                        </div>
+                        <div class="form-group">
+                            <label class="modern-label">GitHub Profile URL</label>
+                            <asp:TextBox ID="txtModalGitHub" runat="server" CssClass="modern-input" 
+                                placeholder="https://github.com/your-username" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="modern-label">Phone Number</label>
+                            <asp:TextBox ID="txtModalPhone" runat="server" CssClass="modern-input" 
+                                placeholder="+1 (555) 123-4567" />
+                        </div>
                         <div class="form-group">
                             <label class="modern-label">Display Order</label>
                             <asp:TextBox ID="txtModalDisplayOrder" runat="server" CssClass="modern-input" 
                                 TextMode="Number" placeholder="1" />
                             <small class="form-hint">Lower numbers appear first</small>
                         </div>
-                        <div class="form-group">
-                            <label class="modern-label">Category</label>
-                            <asp:DropDownList ID="ddlModalCategory" runat="server" CssClass="modern-select">
-                                <asp:ListItem Value="Frontend" Text="Frontend Development" />
-                                <asp:ListItem Value="Backend" Text="Backend Development" />
-                                <asp:ListItem Value="Database" Text="Database & Storage" />
-                                <asp:ListItem Value="Tools" Text="Tools & Frameworks" />
-                                <asp:ListItem Value="General" Text="General Programming" Selected="True" />
-                            </asp:DropDownList>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="modern-label">Icon Class</label>
+                        <asp:DropDownList ID="ddlModalIconClass" runat="server" CssClass="modern-select">
+                            <asp:ListItem Value="fas fa-envelope" Text="Email (fas fa-envelope)" />
+                            <asp:ListItem Value="fas fa-phone" Text="Phone (fas fa-phone)" />
+                            <asp:ListItem Value="fab fa-linkedin" Text="LinkedIn (fab fa-linkedin)" />
+                            <asp:ListItem Value="fab fa-github" Text="GitHub (fab fa-github)" />
+                            <asp:ListItem Value="fas fa-map-marker-alt" Text="Location (fas fa-map-marker-alt)" />
+                            <asp:ListItem Value="fab fa-twitter" Text="Twitter (fab fa-twitter)" />
+                            <asp:ListItem Value="fab fa-instagram" Text="Instagram (fab fa-instagram)" />
+                            <asp:ListItem Value="fas fa-globe" Text="Website (fas fa-globe)" />
+                        </asp:DropDownList>
+                        <div class="icon-preview-container" style="margin-top: 10px; text-align: center;">
+                            <i id="iconPreview" class="fas fa-envelope" style="font-size: 32px; color: #a78bfa;"></i>
                         </div>
                     </div>
                 </asp:Panel>
                 
-                <asp:Panel ID="pnlSkillView" runat="server" Visible="false">
-                    <asp:Literal ID="ltlSkillDetails" runat="server" />
+                <asp:Panel ID="pnlContactInfoView" runat="server" Visible="false">
+                    <asp:Literal ID="ltlContactInfoDetails" runat="server" />
                 </asp:Panel>
             </div>
             
             <div class="modal-footer-modern">
-                <button type="button" class="btn light admin-btn" onclick="closeSkillModal()">Close</button>
-                <asp:Button ID="btnSaveSkill" runat="server" Text="Save Skill" OnClick="btnSaveSkill_Click" 
-                    CssClass="btn dark admin-btn" ValidationGroup="SkillForm" Visible="false" />
+                <button type="button" class="btn light admin-btn" onclick="closeContactInfoModal()">Close</button>
+                <asp:Button ID="btnSaveContactInfo" runat="server" Text="Save Contact Info" OnClick="btnSaveContactInfo_Click" 
+                    CssClass="btn dark admin-btn" ValidationGroup="ContactInfoForm" Visible="false" />
             </div>
         </div>
     </div>
 
     <style>
-        /* Portfolio-style Skills Admin Design */
-        .skills-admin-container {
+        /* Portfolio-style Contact Info Admin Design */
+        .contact-info-admin-container {
             min-height: 100vh;
             background: linear-gradient(135deg, #180322 0%, #3d1555 100%);
             color: #f3e8ff;
@@ -246,7 +264,7 @@
             position: relative;
         }
 
-        .skills-admin-background {
+        .contact-info-admin-background {
             position: fixed;
             top: 0;
             left: 0;
@@ -258,10 +276,10 @@
             z-index: 0;
         }
 
-        .skills-admin-wrapper {
+        .contact-info-admin-wrapper {
             position: relative;
             z-index: 1;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 20px;
         }
@@ -284,7 +302,7 @@
             font-weight: 800;
         }
 
-        .skills-divider-posh {
+        .contact-info-divider-posh {
             width: 48px;
             height: 3px;
             background: linear-gradient(90deg, #a78bfa 0%, #f472b6 100%);
@@ -304,9 +322,8 @@
         }
 
         /* Cards */
-        .skills-crud-card,
-        .skills-preview-card,
-        .info-card {
+        .contact-info-crud-card,
+        .contact-info-preview-card {
             background: rgba(36, 10, 39, 0.97);
             border-radius: 18px;
             box-shadow: 0 8px 32px rgba(36, 10, 39, 0.18);
@@ -314,8 +331,8 @@
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .skills-crud-card:hover,
-        .skills-preview-card:hover {
+        .contact-info-crud-card:hover,
+        .contact-info-preview-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 12px 40px rgba(120, 53, 150, 0.2);
         }
@@ -385,8 +402,8 @@
             box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
         }
 
-        /* Skills Stats */
-        .skills-stats {
+        /* Contact Info Stats */
+        .contact-info-stats {
             display: inline-block;
             background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
             color: #ffffff;
@@ -397,18 +414,8 @@
             margin-bottom: 25px;
         }
 
-        .skills-stats.empty {
-            background: rgba(107, 114, 126, 0.3);
-            color: #9ca3af;
-        }
-
-        .skills-stats.error {
-            background: rgba(239, 68, 68, 0.3);
-            color: #f87171;
-        }
-
         /* Modern Table */
-        .skills-grid-container {
+        .contact-info-grid-container {
             background: rgba(60, 16, 80, 0.6);
             border-radius: 12px;
             padding: 20px;
@@ -450,62 +457,36 @@
             background: rgba(167, 139, 250, 0.05);
         }
 
-        /* Skill Display Elements */
-        .skill-icon-preview {
+        /* Contact Info Display Elements */
+        .contact-info-icon-preview {
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .skill-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 4px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .skill-name {
+        .contact-type {
             color: #f3e8ff;
             font-weight: 500;
             font-size: 14px;
         }
 
-        .skill-level-display {
-            width: 180px;
+        .contact-email,
+        .contact-linkedin,
+        .contact-github,
+        .contact-phone {
+            color: #f3e8ff;
+            font-size: 14px;
         }
 
-        .progress-container {
-            background: rgba(107, 114, 126, 0.3);
-            border-radius: 20px;
-            height: 18px;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 5px;
+        .contact-linkedin a,
+        .contact-github a {
+            color: #a78bfa;
+            text-decoration: none;
         }
 
-        .progress-bar-modern {
-            background: linear-gradient(90deg, #a78bfa 0%, #f472b6 100%);
-            height: 100%;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: width 0.3s ease;
-            position: relative;
-            min-width: 20px;
-        }
-
-        .progress-text {
-            color: #ffffff;
-            font-size: 11px;
-            font-weight: 600;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-        }
-
-        .skill-level-label {
-            font-size: 11px;
-            color: #cbd5e1;
-            text-align: center;
+        .contact-linkedin a:hover,
+        .contact-github a:hover {
+            color: #f472b6;
         }
 
         .display-order {
@@ -614,61 +595,6 @@
 
         .modern-input::placeholder {
             color: rgba(243, 232, 255, 0.6);
-        }
-
-        /* Skills Preview Styles */
-        .skills-preview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            padding: 20px 0;
-        }
-
-        .skill-preview-item {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            transition: transform 0.2s;
-        }
-
-        .skill-preview-item:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .skill-preview-icon img {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .skill-preview-name {
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #f3e8ff;
-        }
-
-        .skill-preview-progress {
-            background: rgba(107, 114, 126, 0.3);
-            border-radius: 10px;
-            height: 8px;
-            margin-bottom: 5px;
-            overflow: hidden;
-        }
-
-        .progress-preview {
-            background: linear-gradient(90deg, #60a5fa 0%, #a78bfa 100%);
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.3s ease;
-        }
-
-        .skill-preview-percent {
-            font-size: 12px;
-            color: #cbd5e1;
         }
 
         /* Modal Styles */
@@ -780,105 +706,59 @@
             display: block;
         }
 
-        /* Skill Details Styles */
-        .skill-details-header {
-            display: flex;
-            align-items: center;
+        .icon-preview-container {
+            background: rgba(60, 16, 80, 0.6);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+        }
+
+        /* Portfolio Preview Styles */
+        .portfolio-preview-container {
+            background: #1f2937;
+            border-radius: 12px;
+            padding: 30px;
+            color: white;
+        }
+
+        /* Contact Info Preview Grid */
+        .contact-info-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
-            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+
+        .contact-info-preview-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
             padding: 20px;
-            background: rgba(167, 139, 250, 0.1);
-            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.2s;
         }
 
-        .skill-icon-large img {
-            width: 64px;
-            height: 64px;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        .contact-info-preview-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        .skill-info h4 {
-            color: #f3e8ff;
-            margin: 0 0 5px 0;
-            font-size: 1.5rem;
-        }
-
-        .skill-category {
+        .contact-info-preview-icon {
+            font-size: 32px;
             color: #a78bfa;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .skill-details-content .detail-item {
-            margin-bottom: 20px;
-        }
-
-        .skill-details-content .detail-item strong {
-            color: #a78bfa;
-            display: block;
             margin-bottom: 10px;
         }
 
-        .skill-progress-large {
-            background: rgba(107, 114, 126, 0.3);
-            border-radius: 25px;
-            height: 30px;
-            overflow: hidden;
-        }
-
-        .progress-bar-large {
-            background: linear-gradient(90deg, #a78bfa 0%, #f472b6 100%);
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 25px;
-            transition: width 0.3s ease;
-        }
-
-        .progress-bar-large span {
-            color: #ffffff;
+        .contact-info-preview-type {
             font-weight: 600;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            margin-bottom: 8px;
+            color: #f3e8ff;
         }
 
-        /* Info Card */
-        .info-card {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-        }
-
-        .info-content {
-            padding: 25px 30px;
-            display: flex;
-            align-items: flex-start;
-            gap: 20px;
-        }
-
-        .info-icon {
-            width: 50px;
-            height: 50px;
-            background: rgba(59, 130, 246, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #60a5fa;
-            font-size: 20px;
-            flex-shrink: 0;
-        }
-
-        .info-text h4 {
-            color: #a78bfa;
-            margin: 0 0 15px 0;
-            font-size: 1.2rem;
-        }
-
-        .info-text p {
+        .contact-info-preview-value {
+            font-size: 12px;
             color: #cbd5e1;
-            margin: 5px 0;
-            line-height: 1.6;
+            word-break: break-word;
         }
 
         /* Responsive Design */
@@ -891,14 +771,10 @@
                 flex-direction: column;
                 gap: 8px;
             }
-
-            .skills-preview-grid {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            }
         }
 
         @media (max-width: 768px) {
-            .skills-admin-wrapper {
+            .contact-info-admin-wrapper {
                 padding: 0 15px;
             }
             
@@ -917,7 +793,7 @@
                 padding: 20px;
             }
             
-            .skills-grid-container {
+            .contact-info-grid-container {
                 padding: 15px;
             }
             
@@ -931,12 +807,6 @@
                 flex-direction: column;
             }
             
-            .info-content {
-                flex-direction: column;
-                text-align: center;
-                gap: 15px;
-            }
-            
             .modal-container {
                 margin: 10px;
                 max-height: 95vh;
@@ -944,15 +814,6 @@
             
             .modal-body-modern {
                 padding: 20px;
-            }
-
-            .skill-level-display {
-                width: 120px;
-            }
-
-            .skill-details-header {
-                flex-direction: column;
-                text-align: center;
             }
         }
 
@@ -964,7 +825,6 @@
 
         .admin-section:nth-child(1) { animation-delay: 0.1s; }
         .admin-section:nth-child(2) { animation-delay: 0.2s; }
-        .admin-section:nth-child(3) { animation-delay: 0.3s; }
 
         @keyframes fadeInUp {
             from {
@@ -979,49 +839,27 @@
     </style>
 
     <script type="text/javascript">
-        function closeSkillModal() {
-            document.getElementById('skillModal').style.display = 'none';
+        function closeContactInfoModal() {
+            document.getElementById('contactInfoModal').style.display = 'none';
         }
         
         // Close modal when clicking outside
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('modal-overlay')) {
-                closeSkillModal();
+                closeContactInfoModal();
             }
         });
         
         // Icon preview functionality
         document.addEventListener('DOMContentLoaded', function() {
-            var iconInput = document.getElementById('<%= txtModalIconUrl.ClientID %>');
-            if (iconInput) {
-                iconInput.addEventListener('input', function() {
-                    var url = this.value.trim();
-                    var preview = document.getElementById('iconPreview');
-                    var img = document.getElementById('previewImg');
-                    
-                    if (url && url !== '') {
-                        img.src = url;
-                        preview.style.display = 'block';
-                        
-                        img.onerror = function() {
-                            preview.style.display = 'none';
-                        };
-                    } else {
-                        preview.style.display = 'none';
-                    }
+            var iconSelect = document.getElementById('<%= ddlModalIconClass.ClientID %>');
+            var iconPreview = document.getElementById('iconPreview');
+            
+            if (iconSelect && iconPreview) {
+                iconSelect.addEventListener('change', function() {
+                    iconPreview.className = this.value;
                 });
             }
-            
-            // Enhanced table interactions
-            const tableRows = document.querySelectorAll('.modern-table tbody tr');
-            tableRows.forEach(row => {
-                row.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateX(5px)';
-                });
-                row.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateX(0)';
-                });
-            });
         });
     </script>
 </asp:Content>

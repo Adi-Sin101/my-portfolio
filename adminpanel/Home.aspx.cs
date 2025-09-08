@@ -7,6 +7,8 @@ using System.Web.UI.WebControls;
 using System.Data.SqlClient;
 using System.Configuration;
 using System.Data;
+using System.Net.Mail;
+using System.Net;
 
 namespace adminpanel
 {
@@ -24,6 +26,286 @@ namespace adminpanel
                 LoadExperience();
                 LoadProjects();
             }
+        }
+
+        // Contact form submit handler
+        protected void BtnSendMessage_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Get form data - check if controls exist first
+                string name = "";
+                string email = "";
+                string subject = "";
+                string message = "";
+
+                // Safely get control values
+                var nameControl = FindControl("txtContactName") as TextBox;
+                var emailControl = FindControl("txtContactEmail") as TextBox;
+                var subjectControl = FindControl("txtContactSubject") as TextBox;
+                var messageControl = FindControl("txtContactMessage") as TextBox;
+
+                if (nameControl != null) name = nameControl.Text.Trim();
+                if (emailControl != null) email = emailControl.Text.Trim();
+                if (subjectControl != null) subject = subjectControl.Text.Trim();
+                if (messageControl != null) message = messageControl.Text.Trim();
+
+                // Basic validation
+                if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(email) || 
+                    string.IsNullOrEmpty(subject) || string.IsNullOrEmpty(message))
+                {
+                    ShowMessage("Please fill in all fields.", "error");
+                    return;
+                }
+                
+                // Email validation
+                if (!IsValidEmail(email))
+                {
+                    ShowMessage("Please enter a valid email address.", "error");
+                    return;
+                }
+                
+                // Get recipient email from ContactInfo table
+                string recipientEmail = GetPrimaryEmailFromContactInfo();
+                
+                // Save to database
+                bool dbSaved = SaveContactMessage(name, email, subject, message);
+                
+                // Send email notification
+                bool emailSent = SendEmailNotification(name, email, subject, message, recipientEmail);
+                
+                // Clear form if controls exist
+                if (nameControl != null) nameControl.Text = "";
+                if (emailControl != null) emailControl.Text = "";
+                if (subjectControl != null) subjectControl.Text = "";
+                if (messageControl != null) messageControl.Text = "";
+                
+                if (emailSent)
+                {
+                    ShowMessage("Thank you for your message! I'll get back to you soon.", "success");
+                }
+                else if (dbSaved)
+                {
+                    ShowMessage("Your message has been saved. Email sending is not configured yet.", "warning");
+                }
+                else
+                {
+                    ShowMessage("Sorry, there was an error processing your message. Please try again.", "error");
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowMessage("Sorry, there was an error sending your message. Please try again.", "error");
+                System.Diagnostics.Debug.WriteLine("Contact form error: " + ex.Message);
+            }
+        }
+
+        private string GetPrimaryEmailFromContactInfo()
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    string query = @"SELECT TOP 1 Email FROM ContactInfo 
+                                   WHERE Email IS NOT NULL AND Email != '' 
+                                   ORDER BY display_order, Id";
+                    
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    object result = cmd.ExecuteScalar();
+                    
+                    if (result != null && !string.IsNullOrEmpty(result.ToString()))
+                    {
+                        return result.ToString();
+                    }
+                    
+                    // Fallback to HomeContent email
+                    string fallbackQuery = "SELECT TOP 1 Email FROM HomeContent WHERE Email IS NOT NULL AND Email != '' ORDER BY Id DESC";
+                    SqlCommand fallbackCmd = new SqlCommand(fallbackQuery, con);
+                    object fallbackResult = fallbackCmd.ExecuteScalar();
+                    
+                    return fallbackResult?.ToString() ?? "";
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Error getting primary email: " + ex.Message);
+                    return "";
+                }
+            }
+        }
+        
+        private bool SaveContactMessage(string name, string email, string subject, string message)
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    
+                    // Create ContactMessages table if it doesn't exist
+                    string createTableQuery = @"
+                        IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='ContactMessages' AND xtype='U')
+                        CREATE TABLE ContactMessages (
+                            Id INT IDENTITY(1,1) PRIMARY KEY,
+                            Name NVARCHAR(100) NOT NULL,
+                            Email NVARCHAR(100) NOT NULL,
+                            Subject NVARCHAR(200) NOT NULL,
+                            Message NVARCHAR(MAX) NOT NULL,
+                            DateReceived DATETIME DEFAULT GETDATE(),
+                            IsRead BIT DEFAULT 0
+                        )";
+                    
+                    SqlCommand createCmd = new SqlCommand(createTableQuery, con);
+                    createCmd.ExecuteNonQuery();
+                    
+                    // Insert the message
+                    string insertQuery = @"INSERT INTO ContactMessages (Name, Email, Subject, Message) 
+                                         VALUES (@Name, @Email, @Subject, @Message)";
+                    
+                    SqlCommand cmd = new SqlCommand(insertQuery, con);
+                    cmd.Parameters.AddWithValue("@Name", name);
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    cmd.Parameters.AddWithValue("@Subject", subject);
+                    cmd.Parameters.AddWithValue("@Message", message);
+                    
+                    cmd.ExecuteNonQuery();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Error saving contact message: " + ex.Message);
+                    return false;
+                }
+            }
+        }
+        
+        private bool SendEmailNotification(string name, string senderEmail, string subject, string message, string recipientEmail)
+        {
+            try
+            {
+                // Check if recipient email is configured
+                if (string.IsNullOrEmpty(recipientEmail) || recipientEmail == "your.email@example.com")
+                {
+                    System.Diagnostics.Debug.WriteLine("No valid recipient email configured in ContactInfo table");
+                    return false;
+                }
+
+                // Get email configuration from web.config or use default values
+                string smtpServer = ConfigurationManager.AppSettings["SMTPServer"] ?? "smtp.gmail.com";
+                string smtpPort = ConfigurationManager.AppSettings["SMTPPort"] ?? "587";
+                string adminEmail = ConfigurationManager.AppSettings["AdminEmail"] ?? recipientEmail;
+                string adminPassword = ConfigurationManager.AppSettings["AdminPassword"] ?? "";
+                
+                // If no admin password is configured, return false
+                if (string.IsNullOrEmpty(adminPassword))
+                {
+                    System.Diagnostics.Debug.WriteLine("No email password configured in web.config");
+                    return false;
+                }
+                
+                MailMessage mail = new MailMessage();
+                mail.From = new MailAddress(adminEmail, "Portfolio Contact Form");
+                mail.To.Add(recipientEmail); // Send to email from ContactInfo table
+                mail.Subject = $"Portfolio Contact: {subject}";
+                
+                string emailBody = $@"
+                    <html>
+                    <body style='font-family: Arial, sans-serif;'>
+                        <div style='max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
+                            <h2 style='color: #a78bfa; text-align: center;'>New Contact Form Message</h2>
+                            <div style='background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;'>
+                                <p><strong>Name:</strong> {name}</p>
+                                <p><strong>Email:</strong> {senderEmail}</p>
+                                <p><strong>Subject:</strong> {subject}</p>
+                                <p><strong>Sent to:</strong> {recipientEmail}</p>
+                            </div>
+                            <div style='background: #fff; padding: 20px; border: 1px solid #e9ecef; border-radius: 8px;'>
+                                <h4>Message:</h4>
+                                <p style='line-height: 1.6;'>{message.Replace("\n", "<br>")}</p>
+                            </div>
+                            <div style='text-align: center; margin-top: 20px; color: #6c757d; font-size: 12px;'>
+                                <p>This message was sent from your portfolio contact form.</p>
+                                <p>Reply directly to: {senderEmail}</p>
+                            </div>
+                        </div>
+                    </body>
+                    </html>";
+                
+                mail.Body = emailBody;
+                mail.IsBodyHtml = true;
+                mail.ReplyToList.Add(senderEmail); // Allow easy reply to sender
+                
+                SmtpClient smtp = new SmtpClient(smtpServer, int.Parse(smtpPort));
+                smtp.Credentials = new NetworkCredential(adminEmail, adminPassword);
+                smtp.EnableSsl = true;
+                
+                smtp.Send(mail);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error sending email: " + ex.Message);
+                return false;
+            }
+        }
+        
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        
+        private void ShowMessage(string message, string type)
+        {
+            // Add a script to show a message to the user
+            string alertClass = type == "success" ? "alert-success" : 
+                               type == "warning" ? "alert-warning" : "alert-danger";
+            string bgColor = type == "success" ? "#d4edda" : 
+                            type == "warning" ? "#fff3cd" : "#f8d7da";
+            string textColor = type == "success" ? "#155724" : 
+                              type == "warning" ? "#856404" : "#721c24";
+            string borderColor = type == "success" ? "#c3e6cb" : 
+                                type == "warning" ? "#ffeaa7" : "#f5c6cb";
+            
+            string script = $@"
+                document.addEventListener('DOMContentLoaded', function() {{
+                    var alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert {alertClass}';
+                    alertDiv.style.cssText = 'position: fixed; top: 100px; right: 20px; z-index: 10000; padding: 15px; border-radius: 8px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); background-color: {bgColor}; color: {textColor}; border: 1px solid {borderColor}; font-family: Arial, sans-serif;';
+                    alertDiv.innerHTML = '{message.Replace("'", "\\'")}';
+                    document.body.appendChild(alertDiv);
+                    
+                    // Fade in
+                    alertDiv.style.opacity = '0';
+                    alertDiv.style.transform = 'translateX(100%)';
+                    alertDiv.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    
+                    setTimeout(function() {{
+                        alertDiv.style.opacity = '1';
+                        alertDiv.style.transform = 'translateX(0)';
+                    }}, 100);
+                    
+                    // Fade out after 5 seconds
+                    setTimeout(function() {{
+                        alertDiv.style.opacity = '0';
+                        alertDiv.style.transform = 'translateX(100%)';
+                        setTimeout(function() {{
+                            if (document.body.contains(alertDiv)) {{
+                                document.body.removeChild(alertDiv);
+                            }}
+                        }}, 300);
+                    }}, 5000);
+                }});
+            ";
+            
+            ClientScript.RegisterStartupScript(this.GetType(), "ShowMessage", script, true);
         }
 
         private void LoadPersonalInfo()
@@ -68,31 +350,164 @@ namespace adminpanel
                         hlnkPhone.NavigateUrl = !string.IsNullOrEmpty(phone) ? "tel:" + phone : "#";
                         hlnkResume.NavigateUrl = !string.IsNullOrEmpty(resumeUrl) ? resumeUrl : "#";
                         
-                        // Contact section
-                        hlnkContactEmail.Text = !string.IsNullOrEmpty(email) ? email : "Contact Email";
-                        hlnkContactEmail.NavigateUrl = !string.IsNullOrEmpty(email) ? "mailto:" + email : "#";
-                        hlnkContactLinkedIn.Text = !string.IsNullOrEmpty(linkedInUrl) ? "LinkedIn Profile" : "LinkedIn";
-                        hlnkContactLinkedIn.NavigateUrl = !string.IsNullOrEmpty(linkedInUrl) ? linkedInUrl : "#";
-                        hlnkContactGitHub.Text = !string.IsNullOrEmpty(gitHubUrl) ? "GitHub Profile" : "GitHub";
-                        hlnkContactGitHub.NavigateUrl = !string.IsNullOrEmpty(gitHubUrl) ? gitHubUrl : "#";
-                        hlnkContactPhone.Text = !string.IsNullOrEmpty(phone) ? phone : "Contact Phone";
-                        hlnkContactPhone.NavigateUrl = !string.IsNullOrEmpty(phone) ? "tel:" + phone : "#";
-                        
                         // Profile image
                         imgHero.ImageUrl = !string.IsNullOrEmpty(imagePath) ? imagePath : "Images/default-profile.jpg";
+                        
+                        reader.Close();
+                        
+                        // Load contact information from ContactInfo table
+                        LoadContactInfoFromDatabase(con, email, phone, linkedInUrl, gitHubUrl);
                     }
                     else
                     {
+                        reader.Close();
                         // No data found in HomeContent, use defaults
                         SetDefaultPersonalInfo();
                     }
-                    reader.Close();
                 }
                 catch (Exception ex)
                 {
                     // Use default values if database query fails
                     SetDefaultPersonalInfo();
                 }
+            }
+        }
+
+        private void LoadContactInfoFromDatabase(SqlConnection con, string fallbackEmail, string fallbackPhone, string fallbackLinkedIn, string fallbackGitHub)
+        {
+            try
+            {
+                // Load contact information from ContactInfo table
+                string contactQuery = @"SELECT Email, LinkedIn, GitHub, Phone 
+                                      FROM ContactInfo 
+                                      ORDER BY display_order, Id";
+                
+                SqlCommand contactCmd = new SqlCommand(contactQuery, con);
+                SqlDataReader contactReader = contactCmd.ExecuteReader();
+                
+                // Default values
+                string primaryEmail = fallbackEmail;
+                string primaryPhone = fallbackPhone;
+                string primaryLinkedIn = fallbackLinkedIn;
+                string primaryGitHub = fallbackGitHub;
+                
+                // Use first record from ContactInfo if available
+                if (contactReader.Read())
+                {
+                    if (!string.IsNullOrEmpty(contactReader["Email"].ToString()))
+                        primaryEmail = contactReader["Email"].ToString();
+                    if (!string.IsNullOrEmpty(contactReader["Phone"].ToString()))
+                        primaryPhone = contactReader["Phone"].ToString();
+                    if (!string.IsNullOrEmpty(contactReader["LinkedIn"].ToString()))
+                        primaryLinkedIn = contactReader["LinkedIn"].ToString();
+                    if (!string.IsNullOrEmpty(contactReader["GitHub"].ToString()))
+                        primaryGitHub = contactReader["GitHub"].ToString();
+                }
+                contactReader.Close();
+                
+                // If we still don't have good data, use sensible defaults
+                if (string.IsNullOrEmpty(primaryEmail) || primaryEmail == "your.email@example.com")
+                    primaryEmail = "adiba0tahsin@gmail.com";
+                if (string.IsNullOrEmpty(primaryLinkedIn))
+                    primaryLinkedIn = "https://www.linkedin.com/in/adiba-tahsin-985b452a2";
+                if (string.IsNullOrEmpty(primaryGitHub))
+                    primaryGitHub = "https://github.com/Adi-Sin101";
+                if (string.IsNullOrEmpty(primaryPhone))
+                    primaryPhone = "+1 (555) 123-4567";
+                
+                // Safely populate contact cards - check if controls exist first
+                PopulateContactCard("hlnkContactEmailCard", primaryEmail, "mailto:");
+                PopulateContactCard("hlnkContactLinkedInCard", ExtractLinkedInUsername(primaryLinkedIn), primaryLinkedIn);
+                PopulateContactCard("hlnkContactGitHubCard", ExtractGitHubUsername(primaryGitHub), primaryGitHub);
+                
+                // Safely populate contact details
+                PopulateContactDetail("ltlContactEmailDetail", primaryEmail);
+                PopulateContactDetail("ltlContactPhoneDetail", primaryPhone);
+                
+                System.Diagnostics.Debug.WriteLine($"Contact Info Loaded - Email: {primaryEmail}, LinkedIn: {primaryLinkedIn}, GitHub: {primaryGitHub}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error loading contact info: " + ex.Message);
+                
+                // Set default data if there's an error
+                PopulateContactCard("hlnkContactEmailCard", "adiba0tahsin@gmail.com", "mailto:");
+                PopulateContactCard("hlnkContactLinkedInCard", "adiba-tahsin-985b452a2", "https://www.linkedin.com/in/adiba-tahsin-985b452a2");
+                PopulateContactCard("hlnkContactGitHubCard", "Adi-Sin101", "https://github.com/Adi-Sin101");
+                PopulateContactDetail("ltlContactEmailDetail", "adiba0tahsin@gmail.com");
+                PopulateContactDetail("ltlContactPhoneDetail", "+1 (555) 123-4567");
+            }
+        }
+
+        private string ExtractLinkedInUsername(string linkedInUrl)
+        {
+            if (string.IsNullOrEmpty(linkedInUrl)) return "LinkedIn Profile";
+            
+            // Extract username from LinkedIn URL
+            if (linkedInUrl.Contains("/in/"))
+            {
+                string[] parts = linkedInUrl.Split('/');
+                for (int i = 0; i < parts.Length; i++)
+                {
+                    if (parts[i] == "in" && i + 1 < parts.Length)
+                    {
+                        return parts[i + 1];
+                    }
+                }
+            }
+            
+            return "LinkedIn Profile";
+        }
+
+        private string ExtractGitHubUsername(string gitHubUrl)
+        {
+            if (string.IsNullOrEmpty(gitHubUrl)) return "GitHub Profile";
+            
+            // Extract username from GitHub URL
+            if (gitHubUrl.Contains("github.com/"))
+            {
+                string[] parts = gitHubUrl.Split('/');
+                for (int i = 0; i < parts.Length; i++)
+                {
+                    if (parts[i] == "github.com" && i + 1 < parts.Length)
+                    {
+                        return parts[i + 1];
+                    }
+                }
+            }
+            
+            return "GitHub Profile";
+        }
+
+        private void PopulateContactCard(string controlId, string value, string urlPrefix)
+        {
+            var control = FindControl(controlId) as HyperLink;
+            if (control != null)
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    control.Text = value;
+                    // For LinkedIn and GitHub, the urlPrefix might be the full URL
+                    if (urlPrefix.StartsWith("http"))
+                    {
+                        control.NavigateUrl = urlPrefix;
+                    }
+                    else
+                    {
+                        control.NavigateUrl = urlPrefix + value;
+                    }
+                }
+                else
+                {
+                    control.Text = GetDefaultText(controlId);
+                    control.NavigateUrl = "#";
+                }
+                
+                System.Diagnostics.Debug.WriteLine($"Populated {controlId}: Text='{control.Text}', URL='{control.NavigateUrl}'");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"Control {controlId} not found!");
             }
         }
 
@@ -105,79 +520,79 @@ namespace adminpanel
                     con.Open();
                     // Check if IsActive column exists
                     string checkQuery = @"SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS 
-                                WHERE TABLE_NAME = 'Education' AND COLUMN_NAME = 'IsActive'";
-            SqlCommand checkCmd = new SqlCommand(checkQuery, con);
-            int hasIsActive = (int)checkCmd.ExecuteScalar();
-            
-            string query;
-            if (hasIsActive > 0)
-            {
-                query = "SELECT Degree, Institution, Year, Grade FROM Education WHERE IsActive = 1 ORDER BY StartYear DESC";
+                                        WHERE TABLE_NAME = 'Education' AND COLUMN_NAME = 'IsActive'";
+                    SqlCommand checkCmd = new SqlCommand(checkQuery, con);
+                    int hasIsActive = (int)checkCmd.ExecuteScalar();
+                    
+                    string query;
+                    if (hasIsActive > 0)
+                    {
+                        query = "SELECT Degree, Institution, Year, Grade FROM Education WHERE IsActive = 1 ORDER BY StartYear DESC";
+                    }
+                    else
+                    {
+                        // Use basic query without IsActive column
+                        query = "SELECT Degree, Institution, Year, Grade FROM Education ORDER BY Id DESC";
+                    }
+                    
+                    SqlDataAdapter da = new SqlDataAdapter(query, con);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    
+                    if (dt.Rows.Count == 0)
+                    {
+                        // Add sample education data
+                        dt.Columns.Add("Degree");
+                        dt.Columns.Add("Institution");
+                        dt.Columns.Add("Year");
+                        dt.Columns.Add("Grade");
+                        
+                        DataRow row1 = dt.NewRow();
+                        row1["Degree"] = "B.Sc in Computer Science";
+                        row1["Institution"] = "Khulna University of Engineering & Technology";
+                        row1["Year"] = "Expected: 2027";
+                        row1["Grade"] = "CGPA: 3.28 / 4.00";
+                        dt.Rows.Add(row1);
+                        
+                        DataRow row2 = dt.NewRow();
+                        row2["Degree"] = "HSC";
+                        row2["Institution"] = "Khulna Govt. Girls' College";
+                        row2["Year"] = "2021";
+                        row2["Grade"] = "GPA: 5.00";
+                        dt.Rows.Add(row2);
+                        
+                        DataRow row3 = dt.NewRow();
+                        row3["Degree"] = "SSC";
+                        row3["Institution"] = "Govt. Coronation Secondary Girls' School";
+                        row3["Year"] = "2019";
+                        row3["Grade"] = "GPA: 5.00";
+                        dt.Rows.Add(row3);
+                    }
+                    
+                    rptEducation.DataSource = dt;
+                    rptEducation.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    // Handle error with sample data
+                    DataTable errorDt = new DataTable();
+                    errorDt.Columns.Add("Degree");
+                    errorDt.Columns.Add("Institution");
+                    errorDt.Columns.Add("Year");
+                    errorDt.Columns.Add("Grade");
+                    
+                    DataRow errorRow = errorDt.NewRow();
+                    errorRow["Degree"] = "Error loading education";
+                    errorRow["Institution"] = ex.Message;
+                    errorRow["Year"] = "N/A";
+                    errorRow["Grade"] = "N/A";
+                    errorDt.Rows.Add(errorRow);
+                    
+                    rptEducation.DataSource = errorDt;
+                    rptEducation.DataBind();
+                }
             }
-            else
-            {
-                // Use basic query without IsActive column
-                query = "SELECT Degree, Institution, Year, Grade FROM Education ORDER BY Id DESC";
-            }
-            
-            SqlDataAdapter da = new SqlDataAdapter(query, con);
-            DataTable dt = new DataTable();
-            da.Fill(dt);
-            
-            if (dt.Rows.Count == 0)
-            {
-                // Add sample education data
-                dt.Columns.Add("Degree");
-                dt.Columns.Add("Institution");
-                dt.Columns.Add("Year");
-                dt.Columns.Add("Grade");
-                
-                DataRow row1 = dt.NewRow();
-                row1["Degree"] = "B.Sc in Computer Science";
-                row1["Institution"] = "Khulna University of Engineering & Technology";
-                row1["Year"] = "Expected: 2027";
-                row1["Grade"] = "CGPA: 3.28 / 4.00";
-                dt.Rows.Add(row1);
-                
-                DataRow row2 = dt.NewRow();
-                row2["Degree"] = "HSC";
-                row2["Institution"] = "Khulna Govt. Girls' College";
-                row2["Year"] = "2021";
-                row2["Grade"] = "GPA: 5.00";
-                dt.Rows.Add(row2);
-                
-                DataRow row3 = dt.NewRow();
-                row3["Degree"] = "SSC";
-                row3["Institution"] = "Govt. Coronation Secondary Girls' School";
-                row3["Year"] = "2019";
-                row3["Grade"] = "GPA: 5.00";
-                dt.Rows.Add(row3);
-            }
-            
-            rptEducation.DataSource = dt;
-            rptEducation.DataBind();
         }
-        catch (Exception ex)
-        {
-            // Handle error with sample data
-            DataTable errorDt = new DataTable();
-            errorDt.Columns.Add("Degree");
-            errorDt.Columns.Add("Institution");
-            errorDt.Columns.Add("Year");
-            errorDt.Columns.Add("Grade");
-            
-            DataRow errorRow = errorDt.NewRow();
-            errorRow["Degree"] = "Error loading education";
-            errorRow["Institution"] = ex.Message;
-            errorRow["Year"] = "N/A";
-            errorRow["Grade"] = "N/A";
-            errorDt.Rows.Add(errorRow);
-            
-            rptEducation.DataSource = errorDt;
-            rptEducation.DataBind();
-        }
-    }
-}
 
         private void LoadSkills()
         {
@@ -505,18 +920,100 @@ namespace adminpanel
             hlnkPhone.NavigateUrl = "#";
             hlnkResume.NavigateUrl = "#";
             
-            // Default contact section
-            hlnkContactEmail.Text = "Update Email";
-            hlnkContactEmail.NavigateUrl = "#";
-            hlnkContactLinkedIn.Text = "Update LinkedIn";
-            hlnkContactLinkedIn.NavigateUrl = "#";
-            hlnkContactGitHub.Text = "Update GitHub";
-            hlnkContactGitHub.NavigateUrl = "#";
-            hlnkContactPhone.Text = "Update Phone";
-            hlnkContactPhone.NavigateUrl = "#";
-            
             // Default profile image
             imgHero.ImageUrl = "Images/default-profile.jpg";
+            
+            // Ensure ContactInfo table exists and has default data
+            EnsureContactInfoTableWithDefaults();
+            
+            // Safely populate contact cards with defaults from your VS Code portfolio
+            PopulateContactCard("hlnkContactEmailCard", "adiba0tahsin@gmail.com", "mailto:");
+            PopulateContactCard("hlnkContactLinkedInCard", "adiba-tahsin-985b452a2", "https://www.linkedin.com/in/adiba-tahsin-985b452a2");
+            PopulateContactCard("hlnkContactGitHubCard", "Adi-Sin101", "https://github.com/Adi-Sin101");
+            
+            // Safely populate contact details with defaults
+            PopulateContactDetail("ltlContactEmailDetail", "adiba0tahsin@gmail.com");
+            PopulateContactDetail("ltlContactPhoneDetail", "+1 (555) 123-4567");
+        }
+
+        private void EnsureContactInfoTableWithDefaults()
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    
+                    // Create ContactInfo table if it doesn't exist
+                    string createTableQuery = @"
+                        IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='ContactInfo' AND xtype='U')
+                        BEGIN
+                            CREATE TABLE ContactInfo (
+                                Id INT IDENTITY(1,1) PRIMARY KEY,
+                                Email VARCHAR(255),
+                                LinkedIn VARCHAR(255),
+                                GitHub VARCHAR(255),
+                                Phone VARCHAR(50),
+                                icon_class VARCHAR(100) DEFAULT 'fas fa-envelope',
+                                display_order INT DEFAULT 0
+                            )
+                        END";
+                    
+                    SqlCommand createCmd = new SqlCommand(createTableQuery, con);
+                    createCmd.ExecuteNonQuery();
+                    
+                    // Check if there's any data in the table
+                    string checkDataQuery = "SELECT COUNT(*) FROM ContactInfo";
+                    SqlCommand checkCmd = new SqlCommand(checkDataQuery, con);
+                    int recordCount = (int)checkCmd.ExecuteScalar();
+                    
+                    // If no data exists, insert default data matching your VS Code portfolio
+                    if (recordCount == 0)
+                    {
+                        string insertDefaultQuery = @"
+                            INSERT INTO ContactInfo (Email, LinkedIn, GitHub, Phone, icon_class, display_order)
+                            VALUES 
+                            ('adiba0tahsin@gmail.com', 'https://www.linkedin.com/in/adiba-tahsin-985b452a2', 'https://github.com/Adi-Sin101', '+1 (555) 123-4567', 'fas fa-envelope', 1)";
+                        
+                        SqlCommand insertCmd = new SqlCommand(insertDefaultQuery, con);
+                        insertCmd.ExecuteNonQuery();
+                        
+                        System.Diagnostics.Debug.WriteLine("Default contact info inserted into ContactInfo table");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error ensuring ContactInfo table: {ex.Message}");
+                }
+            }
+        }
+
+        private void PopulateContactDetail(string controlId, string value)
+        {
+            var control = FindControl(controlId) as Literal;
+            if (control != null)
+            {
+                control.Text = !string.IsNullOrEmpty(value) ? value : GetDefaultText(controlId);
+            }
+        }
+
+        private string GetDefaultText(string controlId)
+        {
+            switch (controlId)
+            {
+                case "hlnkContactEmailCard":
+                case "ltlContactEmailDetail":
+                    return "adiba0tahsin@gmail.com";
+                case "hlnkContactPhoneCard":
+                case "ltlContactPhoneDetail":
+                    return "+1 (555) 123-4567";
+                case "hlnkContactLinkedInCard":
+                    return "adiba-tahsin-985b452a2";
+                case "hlnkContactGitHubCard":
+                    return "Adi-Sin101";
+                default:
+                    return "Update Contact Info";
+            }
         }
     }
 }

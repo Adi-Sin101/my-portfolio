@@ -1,203 +1,143 @@
-// Portfolio JavaScript functionality - Integrated from VS Code with CSS animations
+﻿// Contact form handler: show thank you and clear
+document.addEventListener('DOMContentLoaded', function () {
+    var contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            alert('Thank you for contacting me! I will get back to you soon.');
+            contactForm.reset();
+        });
+    }
+
+    // Navigation active state functionality
+    const navLinks = document.querySelectorAll('.nav-links a');
+    const sections = document.querySelectorAll('section, header[id]');
+
+    // Function to set active nav link
+    function setActiveNavLink(activeLink) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        activeLink.classList.add('active');
+    }
+
+    // Handle nav link clicks
+    navLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetSection = document.getElementById(targetId);
+
+            if (targetSection) {
+                // Smooth scroll to section
+                targetSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+
+                // Set active state
+                setActiveNavLink(this);
+            }
+        });
+    });
+
+    // Update active nav link based on scroll position
+    function updateActiveNavOnScroll() {
+        let current = '';
+
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            if (window.pageYOffset >= sectionTop - 100) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    // Add scroll event listener
+    window.addEventListener('scroll', updateActiveNavOnScroll);
+
+    // Set initial active state
+    updateActiveNavOnScroll();
+});
+// Contact form handler: show thank you and clear
+document.addEventListener('DOMContentLoaded', function () {
+    var contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            alert('Thank you for contacting me! I will get back to you soon.');
+            contactForm.reset();
+        });
+    }
+});
 const roles = [
     "Web Developer",
-    "App Developer", 
+    "App Developer",
     "Programmer",
-    "Tech-Business Case Competitor",
-    "CS Student"
-];
+    "Tech-Business Case Competitor", // 👆 Change anything inside this array to match your style.
+    // Each item will show up one by one every few seconds.
+    "CS Student"];
 
 let index = 0;
-let roleElement;
-
+const roleElement = document.getElementById("role-text");
 function rotaterole() {
-    if (!roleElement) return;
-    
     roleElement.classList.add("fade-out");
 
+    //js function
     setTimeout(() => {
         roleElement.textContent = roles[index];
         roleElement.classList.remove("fade-out");
         index = (index + 1) % roles.length;
-    }, 500);
+    }, 500); // Adjust the timeout to match the CSS transition duration.
 }
+setInterval(rotaterole, 2500); // Change the interval to control how often the role changes.
 
-document.addEventListener("DOMContentLoaded", function() {
-    // Initialize role rotation
-    roleElement = document.getElementById("role-text");
-    if (roleElement) {
-        setInterval(rotaterole, 2500);
-    }
+// removed obsolete progress bar animation logic and dark mode toggle
 
-    // Skills progress bar animation
-    const skillsObserver = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const fills = entry.target.querySelectorAll(".progress-fill");
-                fills.forEach(fill => {
-                    const percentage = fill.getAttribute("data-percentage");
-                    if (percentage) {
-                        fill.style.width = "0%";
-                        setTimeout(() => {
-                            fill.style.width = percentage;
-                        }, 200);
-                    }
-                });
-            }
-        });
-    }, {
-        threshold: 0.3
-    });
+// Fade-in scroll animation
+const faders = document.querySelectorAll(".fade-in");
 
-    // Observe skills section
-    const skillsSection = document.querySelector(".skills-section");
-    if (skillsSection) {
-        skillsObserver.observe(skillsSection);
-    }
-
-    // Fade-in scroll animation
-    const faders = document.querySelectorAll(".fade-in");
-    const fadeObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add("visible");
-            }
-        });
-    }, { threshold: 0.1 });
-
-    faders.forEach(fadeEl => fadeObserver.observe(fadeEl));
-
-    // Modal logic for experience cards
-    const modal = document.getElementById("experienceModal");
-    const modalImage = document.getElementById("modalImage");
-    const modalText = document.getElementById("modalText");
-    const closeModal = document.querySelector(".close-modal");
-
-    if (modal && modalImage && modalText && closeModal) {
-        document.querySelectorAll(".experience-card").forEach(card => {
-            card.addEventListener("click", () => {
-                const img = card.querySelector("img");
-                const title = card.querySelector("h4");
-                const company = card.querySelector(".company");
-                const desc = card.querySelector("p:not(.company)");
-
-                if (img && title && company && desc) {
-                    modalImage.src = img.src;
-                    modalText.innerHTML = `<h3>${title.textContent}</h3><p><strong>${company.textContent}</strong></p><p>${desc.textContent}</p>`;
-                    modal.style.display = "block";
-                }
-            });
-        });
-
-        closeModal.addEventListener("click", () => {
-            modal.style.display = "none";
-        });
-
-        window.addEventListener("click", e => {
-            if (e.target === modal) modal.style.display = "none";
-        });
-
-        // Close modal with Escape key
-        document.addEventListener("keydown", e => {
-            if (e.key === "Escape" && modal.style.display === "block") {
-                modal.style.display = "none";
-            }
-        });
-    }
-
-    // Smooth scrolling for navigation links
-    const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            const targetSection = document.querySelector(targetId);
-            
-            if (targetSection) {
-                // Account for fixed navbar height
-                const offsetTop = targetSection.offsetTop - 100;
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-
-    // Add subtle parallax effect to hero section
-    window.addEventListener('scroll', function() {
-        const scrolled = window.pageYOffset;
-        const heroSection = document.querySelector('.hero-section');
-        
-        if (heroSection) {
-            const rate = scrolled * -0.5;
-            heroSection.style.transform = `translateY(${rate}px)`;
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
         }
     });
+}, { threshold: 0.1 });
 
-    // Animate skill icons on load
-    const skillIcons = document.querySelectorAll('.skill-icon');
-    skillIcons.forEach((icon, index) => {
-        icon.style.opacity = '0';
-        icon.style.transform = 'scale(0.8)';
-        
-        setTimeout(() => {
-            icon.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-            icon.style.opacity = '1';
-            icon.style.transform = 'scale(1)';
-        }, index * 100);
+faders.forEach(fadeEl => observer.observe(fadeEl));
+
+// Modal logic
+const modal = document.getElementById("experienceModal");
+const modalImage = document.getElementById("modalImage");
+const modalText = document.getElementById("modalText");
+const closeModal = document.querySelector(".close-modal");
+
+document.querySelectorAll(".experience-card").forEach(card => {
+    card.addEventListener("click", () => {
+        const imgSrc = card.querySelector("img").src;
+        const title = card.querySelector("h4").textContent;
+        const company = card.querySelector(".company").textContent;
+        const desc = card.querySelector("p:not(.company)").textContent;
+
+        modalImage.src = imgSrc;
+        modalText.innerHTML = `<h3>${title}</h3><p><strong>${company}</strong></p><p>${desc}</p>`;
+        modal.style.display = "block";
     });
+});
 
-    // Add hover effects to project and experience cards
-    const cards = document.querySelectorAll('.project-card, .experience-card');
-    cards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-18px) scale(1.06)';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
-        });
-    });
+closeModal.addEventListener("click", () => {
+    modal.style.display = "none";
+});
 
-    // Animate contact boxes on scroll
-    const contactBoxes = document.querySelectorAll('.contact-box');
-    const contactObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry, index) => {
-            if (entry.isIntersecting) {
-                setTimeout(() => {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }, index * 100);
-            }
-        });
-    }, { threshold: 0.3 });
-
-    contactBoxes.forEach(box => {
-        box.style.opacity = '0';
-        box.style.transform = 'translateY(30px)';
-        box.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        contactObserver.observe(box);
-    });
-
-    // Add typing effect to hero title (optional enhancement)
-    const heroTitle = document.querySelector('.hero-text h1 .highlight');
-    if (heroTitle) {
-        const text = heroTitle.textContent;
-        heroTitle.textContent = '';
-        
-        let i = 0;
-        function typeWriter() {
-            if (i < text.length) {
-                heroTitle.textContent += text.charAt(i);
-                i++;
-                setTimeout(typeWriter, 100);
-            }
-        }
-        
-        // Start typing effect after a brief delay
-        setTimeout(typeWriter, 1000);
-    }
+window.addEventListener("click", e => {
+    if (e.target === modal) modal.style.display = "none";
 });
 
 

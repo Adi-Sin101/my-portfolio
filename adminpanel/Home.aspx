@@ -154,41 +154,56 @@
             </div>
         </section>
 
-        <!-- Contact Section -->
-        <section id="contact" class="contact-section fade-in">
-            <div class="contact-label-posh">Contact Me</div>
-            <div class="contact-divider-posh"></div>
-            <div class="contact-content">
-                <div class="contact-box">
-                    <span class="contact-icon" aria-label="Email">
-                        <i class="fas fa-envelope"></i>
-                    </span>
-                    <strong>Email:</strong><br>
-                    <asp:HyperLink ID="hlnkContactEmail" runat="server" />
-                </div>
-                <div class="contact-box">
-                    <span class="contact-icon" aria-label="LinkedIn">
-                        <i class="fab fa-linkedin"></i>
-                    </span>
-                    <strong>LinkedIn:</strong><br>
-                    <asp:HyperLink ID="hlnkContactLinkedIn" runat="server" Target="_blank" />
-                </div>
-                <div class="contact-box">
-                    <span class="contact-icon" aria-label="GitHub">
-                        <i class="fab fa-github"></i>
-                    </span>
-                    <strong>GitHub:</strong><br>
-                    <asp:HyperLink ID="hlnkContactGitHub" runat="server" Target="_blank" />
-                </div>
-                <div class="contact-box">
-                    <span class="contact-icon" aria-label="Phone">
-                        <i class="fas fa-phone"></i>
-                    </span>
-                    <strong>Phone:</strong><br>
-                    <asp:HyperLink ID="hlnkContactPhone" runat="server" />
-                </div>
+       <section id="contact" class="contact-section">
+    <h3>Contact</h3>
+    <div class="contact-cards-row">
+        <!-- Email Card -->
+        <div class="contact-card">
+            <div class="contact-card-icon" aria-label="Email">
+                <i class="fas fa-envelope"></i>
             </div>
-        </section>
+            <asp:HyperLink ID="hlnkContactEmailCard" runat="server" CssClass="contact-card-link" Text="adiba0tahsin@gmail.com" NavigateUrl="mailto:adiba0tahsin@gmail.com" />
+            <div class="contact-card-label">Email Me</div>
+        </div>
+
+        <!-- LinkedIn Card -->
+        <div class="contact-card">
+            <div class="contact-card-icon" aria-label="LinkedIn">
+                <i class="fab fa-linkedin"></i>
+            </div>
+            <asp:HyperLink ID="hlnkContactLinkedInCard" runat="server" CssClass="contact-card-link" Text="adiba-tahsin-985b452a2" NavigateUrl="https://www.linkedin.com/in/adiba-tahsin-985b452a2" Target="_blank" />
+            <div class="contact-card-label">LinkedIn</div>
+        </div>
+
+        <!-- GitHub Card -->
+        <div class="contact-card">
+            <div class="contact-card-icon" aria-label="GitHub">
+                <i class="fab fa-github"></i>
+            </div>
+            <asp:HyperLink ID="hlnkContactGitHubCard" runat="server" CssClass="contact-card-link" Text="Adi-Sin101" NavigateUrl="https://github.com/Adi-Sin101" Target="_blank" />
+            <div class="contact-card-label">GitHub</div>
+        </div>
+    </div>
+
+    <!-- Contact Form -->
+    <div class="contact-form" id="contactForm">
+        <h4 style="text-align:center;color:#a78bfa;margin-bottom:18px;letter-spacing:0.5px;">Contact Form</h4>
+        <div class="form-row form-row-flex">
+            <asp:TextBox ID="txtContactName" runat="server" CssClass="form-input" placeholder="Your Name *" />
+            <asp:TextBox ID="txtContactEmail" runat="server" CssClass="form-input" placeholder="Your Email *" TextMode="Email" />
+        </div>
+        <div class="form-row">
+            <asp:TextBox ID="txtContactSubject" runat="server" CssClass="form-input" placeholder="Your Subject.." />
+        </div>
+        <div class="form-row">
+            <asp:TextBox ID="txtContactMessage" runat="server" CssClass="form-input" placeholder="Your message..." TextMode="MultiLine" Rows="4" />
+        </div>
+        <div class="form-row" style="text-align:center;">
+            <asp:Button ID="btnSendMessage" runat="server" Text="Send Message" CssClass="btn light" OnClick="BtnSendMessage_Click" />
+        </div>
+    </div>
+</section>
+
 
         <!-- Modal Popup -->
         <div id="experienceModal" class="modal">

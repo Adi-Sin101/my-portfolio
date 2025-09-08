@@ -101,6 +101,8 @@
   <ItemGroup>
     <Content Include="About.aspx" />
     <Content Include="Contact.aspx" />
+    <Content Include="ContactAdmin.aspx" />
+    <Content Include="ContactInfo.aspx" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
@@ -159,6 +161,10 @@
     <Content Include="Content\bootstrap-grid.css.map" />
     <None Include=".editorconfig" />
     <Content Include="README-Setup.md" />
+    <Content Include="EmailSetupGuide.md" />
+    <Content Include="ContactCRUDGuide.md" />
+    <Content Include="LoginTroubleshootingGuide.md" />
+    <Content Include="ContactInfoCRUDGuide.md" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -212,6 +218,20 @@
     <Compile Include="Contact.aspx.designer.cs">
       <DependentUpon>Contact.aspx</DependentUpon>
     </Compile>
+    <Compile Include="ContactAdmin.aspx.cs">
+      <DependentUpon>ContactAdmin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ContactAdmin.aspx.designer.cs">
+      <DependentUpon>ContactAdmin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ContactInfo.aspx.cs">
+      <DependentUpon>ContactInfo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ContactInfo.aspx.designer.cs">
+      <DependentUpon>ContactInfo.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -253,6 +273,7 @@
     <Compile Include="Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
+    <Compile Include="LoginTest.aspx.cs" />
     <Compile Include="Projects.aspx.cs">
       <DependentUpon>Projects.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

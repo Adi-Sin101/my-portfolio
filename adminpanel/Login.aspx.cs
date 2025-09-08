@@ -43,29 +43,38 @@ namespace adminpanel
                 {
                     con.Open();
                     
-                    // Query your AdminUsers table with Password column
-                    string query = "SELECT Id FROM AdminUsers WHERE Username=@u AND Password=@p";
+                    // Simple query using your existing table structure
+                    string query = "SELECT Id, Username FROM AdminUsers WHERE Username=@u AND Password=@p";
                     SqlCommand cmd = new SqlCommand(query, con);
                     cmd.Parameters.AddWithValue("@u", username);
                     cmd.Parameters.AddWithValue("@p", password);
 
-                    object result = cmd.ExecuteScalar();
+                    SqlDataReader reader = cmd.ExecuteReader();
                     
-                    if (result != null)
+                    if (reader.Read())
                     {
-                        // Login successful - update LastLogin
+                        // Login successful
+                        string userId = reader["Id"].ToString();
+                        string userName = reader["Username"].ToString();
+                        reader.Close();
+                        
+                        // Update LastLogin
                         string updateQuery = "UPDATE AdminUsers SET LastLogin = GETDATE() WHERE Username = @u";
                         SqlCommand updateCmd = new SqlCommand(updateQuery, con);
                         updateCmd.Parameters.AddWithValue("@u", username);
                         updateCmd.ExecuteNonQuery();
                         
                         // Set session and redirect
-                        Session["AdminUser"] = username;
+                        Session["AdminUser"] = userName;
+                        Session["AdminUserId"] = userId;
+                        Session["LoginTime"] = DateTime.Now;
+                        
                         Response.Redirect("Default.aspx");
                         return;
                     }
                     else
                     {
+                        reader.Close();
                         ShowMessage("Invalid username or password!", "danger");
                     }
                 }
@@ -96,14 +105,14 @@ namespace adminpanel
             switch (type)
             {
                 case "success":
-                    lblMessage.CssClass = "alert alert-success";
+                    lblMessage.CssClass = "login-alert alert-success";
                     break;
                 case "warning":
-                    lblMessage.CssClass = "alert alert-warning";
+                    lblMessage.CssClass = "login-alert alert-warning";
                     break;
                 case "danger":
                 default:
-                    lblMessage.CssClass = "alert alert-danger";
+                    lblMessage.CssClass = "login-alert alert-danger";
                     break;
             }
         }
