@@ -31,6 +31,61 @@ namespace adminpanel
             }
         }
 
+        #region Page Visit Tracking
+
+        private void TrackSkillsPageVisit()
+        {
+            try
+            {
+                // Get current page visit cookie
+                HttpCookie pageVisitCookie = Request.Cookies["AdminPageVisits"];
+                
+                int skillsVisits = 1;
+                
+                if (pageVisitCookie != null)
+                {
+                    // Existing cookie - increment Skills page visits
+                    int.TryParse(pageVisitCookie.Values["SkillsPageVisits"], out skillsVisits);
+                    skillsVisits++;
+                }
+                
+                // Create/Update page visit cookie
+                HttpCookie newPageVisitCookie = new HttpCookie("AdminPageVisits");
+                if (pageVisitCookie != null)
+                {
+                    // Copy existing values
+                    foreach (string key in pageVisitCookie.Values.AllKeys)
+                    {
+                        if (key != "SkillsPageVisits")
+                        {
+                            newPageVisitCookie.Values[key] = pageVisitCookie.Values[key];
+                        }
+                    }
+                }
+                
+                // Update Skills page specific data
+                newPageVisitCookie.Values["SkillsPageVisits"] = skillsVisits.ToString();
+                newPageVisitCookie.Values["LastSkillsVisit"] = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                
+                // Set cookie expiration to 30 days
+                newPageVisitCookie.Expires = DateTime.Now.AddDays(30);
+                newPageVisitCookie.HttpOnly = true;
+                
+                // Add cookie to response
+                Response.Cookies.Add(newPageVisitCookie);
+                
+                // Log debug information
+                System.Diagnostics.Debug.WriteLine($"Skills page visit tracked - Visit #{skillsVisits}");
+            }
+            catch (Exception ex)
+            {
+                // Log error but don't break page loading
+                System.Diagnostics.Debug.WriteLine($"Error tracking Skills page visit: {ex.Message}");
+            }
+        }
+
+        #endregion
+        
         #region Skills CRUD Operations
 
         private void LoadSkills()

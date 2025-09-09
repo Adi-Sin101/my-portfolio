@@ -47,12 +47,12 @@
                 <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/Default.aspx">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Projects.aspx">Projects</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Skills.aspx">Skills</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Experience.aspx">Experience</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Education.aspx">Education</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/About.aspx">About</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/AboutContent.aspx">About Content</a></li>
+                           <li class="nav-item"><a class="nav-link" runat="server" href="~/AboutContent.aspx">About Content</a></li>
+                         <li class="nav-item"><a class="nav-link" runat="server" href="~/Education.aspx">Education</a></li>
+                          <li class="nav-item"><a class="nav-link" runat="server" href="~/Skills.aspx">Skills</a></li>
+                           <li class="nav-item"><a class="nav-link" runat="server" href="~/Experience.aspx">Experience</a></li>
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Projects.aspx">Projects</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/ContactInfo.aspx">Contact Info</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/ContactAdmin.aspx">Messages</a></li>
                     </ul>

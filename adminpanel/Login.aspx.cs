@@ -64,10 +64,13 @@ namespace adminpanel
                         updateCmd.Parameters.AddWithValue("@u", username);
                         updateCmd.ExecuteNonQuery();
                         
-                        // Set session and redirect
+                        // Set session variables
                         Session["AdminUser"] = userName;
                         Session["AdminUserId"] = userId;
                         Session["LoginTime"] = DateTime.Now;
+                        
+                        // Create/Update visitor tracking cookie
+                        CreateVisitorTrackingCookie(userName);
                         
                         Response.Redirect("Default.aspx");
                         return;
@@ -95,6 +98,90 @@ namespace adminpanel
                 }
             }
         }
+
+        #region Visitor Tracking Cookie Methods
+
+        private void CreateVisitorTrackingCookie(string username)
+        {
+            try
+            {
+                // Get existing visitor cookie
+                HttpCookie visitorCookie = Request.Cookies["AdminVisitorInfo"];
+                
+                int visitCount = 1;
+                DateTime firstVisitDate = DateTime.Now;
+                
+                if (visitorCookie != null)
+                {
+                    // Existing visitor - increment visit count
+                    int.TryParse(visitorCookie.Values["VisitCount"], out visitCount);
+                    visitCount++;
+                    
+                    // Keep original first visit date
+                    DateTime.TryParse(visitorCookie.Values["FirstVisit"], out firstVisitDate);
+                    if (firstVisitDate == DateTime.MinValue)
+                    {
+                        firstVisitDate = DateTime.Now;
+                    }
+                }
+                
+                // Create new visitor cookie with updated information
+                HttpCookie newVisitorCookie = new HttpCookie("AdminVisitorInfo");
+                newVisitorCookie.Values["Username"] = HttpUtility.UrlEncode(username);
+                newVisitorCookie.Values["VisitCount"] = visitCount.ToString();
+                newVisitorCookie.Values["FirstVisit"] = firstVisitDate.ToString("yyyy-MM-dd HH:mm:ss");
+                newVisitorCookie.Values["LastVisit"] = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                newVisitorCookie.Values["LastLoginIP"] = GetClientIPAddress();
+                
+                // Set cookie expiration to 30 days
+                newVisitorCookie.Expires = DateTime.Now.AddDays(30);
+                newVisitorCookie.HttpOnly = true; // Security: prevent JavaScript access
+        
+                // Add cookie to response
+                Response.Cookies.Add(newVisitorCookie);
+                
+                // Log debug information
+                System.Diagnostics.Debug.WriteLine($"Visitor cookie created/updated for {username} - Visit #{visitCount}");
+            }
+            catch (Exception ex)
+            {
+                // Log error but don't break login process
+                System.Diagnostics.Debug.WriteLine($"Error creating visitor cookie: {ex.Message}");
+            }
+        }
+
+        private string GetClientIPAddress()
+        {
+            try
+            {
+                // Try to get real IP address, accounting for proxies
+                string ipAddress = Request.Headers["X-Forwarded-For"];
+                
+                if (string.IsNullOrEmpty(ipAddress) || "unknown".Equals(ipAddress, StringComparison.OrdinalIgnoreCase))
+                {
+                    ipAddress = Request.Headers["X-Real-IP"];
+                }
+                
+                if (string.IsNullOrEmpty(ipAddress) || "unknown".Equals(ipAddress, StringComparison.OrdinalIgnoreCase))
+                {
+                    ipAddress = Request.UserHostAddress;
+                }
+                
+                // Handle multiple IPs (comma-separated)
+                if (!string.IsNullOrEmpty(ipAddress) && ipAddress.Contains(","))
+                {
+                    ipAddress = ipAddress.Split(',')[0].Trim();
+                }
+                
+                return ipAddress ?? "Unknown";
+            }
+            catch
+            {
+                return "Unknown";
+            }
+        }
+
+        #endregion
         
         private void ShowMessage(string message, string type)
         {

@@ -101,7 +101,6 @@
   <ItemGroup>
     <Content Include="About.aspx" />
     <Content Include="AboutContent.aspx" />
-    <Content Include="Contact.aspx" />
     <Content Include="ContactAdmin.aspx" />
     <Content Include="ContactInfo.aspx" />
     <Content Include="Content\bootstrap-grid.css" />
@@ -171,6 +170,9 @@
     <Content Include="EducationSystemSolution.md" />
     <Content Include="AboutContentCRUDGuide.md" />
     <Content Include="AboutContentIntegrationGuide.md" />
+    <Content Include="BasicCookieImplementationGuide.md" />
+    <Content Include="CookieImplementationGuide.md" />
+    <Content Include="CookieRemovalSummary.md" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -226,13 +228,6 @@
       <DependentUpon>About.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Contact.aspx.cs">
-      <DependentUpon>Contact.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Contact.aspx.designer.cs">
-      <DependentUpon>Contact.aspx</DependentUpon>
-    </Compile>
     <Compile Include="ContactAdmin.aspx.cs">
       <DependentUpon>ContactAdmin.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -338,12 +333,16 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Examples\" />
+    <Folder Include="Utilities\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.7.0.slim.min.map" />
     <Content Include="Scripts\jquery-3.7.0.min.map" />
     <Content Include="setup-images.bat" />
+    <Content Include="VisitorTrackingGuide.md" />
+    <Content Include="SkillsCookieRemovalSummary.md" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

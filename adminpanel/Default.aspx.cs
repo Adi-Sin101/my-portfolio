@@ -93,9 +93,128 @@ namespace adminpanel
                     lblLastUpdate.Text = "Error";
                     
                     // You might want to log this error
-                    Response.Write("<script>console.log('Dashboard stats error: " + ex.Message + "');</script>");
+                    System.Diagnostics.Debug.WriteLine($"Database error in LoadDashboardStats: {ex.Message}");
                 }
             }
+            
+            // Load visitor tracking information from cookies
+            LoadVisitorTrackingInfo();
         }
+
+        #region Visitor Tracking Cookie Display
+
+        private void LoadVisitorTrackingInfo()
+        {
+            try
+            {
+                // Read visitor tracking cookie (no Skills page tracking)
+                HttpCookie visitorCookie = Request.Cookies["AdminVisitorInfo"];
+                
+                if (visitorCookie != null)
+                {
+                    // Display visitor information
+                    pnlVisitorInfo.Visible = true;
+                    pnlNoVisitorInfo.Visible = false;
+                    
+                    // Visitor Name
+                    string visitorName = HttpUtility.UrlDecode(visitorCookie.Values["Username"] ?? "Admin User");
+                    lblVisitorName.Text = visitorName;
+                    
+                    // Visit Count
+                    string visitCountStr = visitorCookie.Values["VisitCount"] ?? "1";
+                    lblVisitCount.Text = visitCountStr;
+                    
+                    // First Visit Date
+                    string firstVisitStr = visitorCookie.Values["FirstVisit"];
+                    if (DateTime.TryParse(firstVisitStr, out DateTime firstVisit))
+                    {
+                        lblFirstVisit.Text = firstVisit.ToString("MMM dd, yyyy");
+                    }
+                    else
+                    {
+                        lblFirstVisit.Text = "Today";
+                    }
+                    
+                    // Last Visit Date
+                    string lastVisitStr = visitorCookie.Values["LastVisit"];
+                    if (DateTime.TryParse(lastVisitStr, out DateTime lastVisit))
+                    {
+                        TimeSpan timeDiff = DateTime.Now.Subtract(lastVisit);
+                        if (timeDiff.TotalMinutes < 1)
+                        {
+                            lblLastVisit.Text = "Just now";
+                        }
+                        else if (timeDiff.TotalHours < 1)
+                        {
+                            lblLastVisit.Text = $"{(int)timeDiff.TotalMinutes} min ago";
+                        }
+                        else if (timeDiff.TotalDays < 1)
+                        {
+                            lblLastVisit.Text = lastVisit.ToString("HH:mm");
+                        }
+                        else
+                        {
+                            lblLastVisit.Text = lastVisit.ToString("MMM dd");
+                        }
+                    }
+                    else
+                    {
+                        lblLastVisit.Text = "Now";
+                    }
+                    
+                    // Generate welcome message
+                    GenerateWelcomeMessage(visitorName, int.Parse(visitCountStr), firstVisit);
+                }
+                else
+                {
+                    // No visitor tracking data available
+                    pnlVisitorInfo.Visible = false;
+                    pnlNoVisitorInfo.Visible = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Error reading cookies - show no visitor info panel
+                pnlVisitorInfo.Visible = false;
+                pnlNoVisitorInfo.Visible = true;
+                System.Diagnostics.Debug.WriteLine($"Error loading visitor tracking info: {ex.Message}");
+            }
+        }
+
+        private void GenerateWelcomeMessage(string visitorName, int visitCount, DateTime firstVisit)
+        {
+            string message = "";
+            string messageClass = "alert alert-info";
+            
+            if (visitCount == 1)
+            {
+                message = $"🎉 Welcome to the admin panel, {visitorName}! This is your first visit.";
+                messageClass = "alert alert-success";
+            }
+            else if (visitCount <= 5)
+            {
+                int daysSinceFirst = (DateTime.Now - firstVisit).Days;
+                message = $"👋 Welcome back, {visitorName}! Visit #{visitCount}";
+                if (daysSinceFirst > 0)
+                {
+                    message += $" (member for {daysSinceFirst} day{(daysSinceFirst == 1 ? "" : "s")})";
+                }
+                messageClass = "alert alert-primary";
+            }
+            else if (visitCount <= 20)
+            {
+                message = $"⭐ Hello {visitorName}! You're a regular user with {visitCount} visits.";
+                messageClass = "alert alert-info";
+            }
+            else
+            {
+                message = $"🏆 Welcome back, {visitorName}! You're a power user with {visitCount} visits!";
+                messageClass = "alert alert-warning";
+            }
+            
+            lblWelcomeMessage.Text = $"<div class='{messageClass}' style='margin-top: 15px; padding: 12px; border-radius: 8px;'>{message}</div>";
+        }
+
+        #endregion
     }
 }

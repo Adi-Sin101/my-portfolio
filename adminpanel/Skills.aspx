@@ -306,7 +306,8 @@
         /* Cards */
         .skills-crud-card,
         .skills-preview-card,
-        .info-card {
+        .info-card,
+        .cookie-demo-card {
             background: rgba(36, 10, 39, 0.97);
             border-radius: 18px;
             box-shadow: 0 8px 32px rgba(36, 10, 39, 0.18);

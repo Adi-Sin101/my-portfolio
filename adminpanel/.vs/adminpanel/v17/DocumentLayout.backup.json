@@ -3,24 +3,48 @@
   "WorkspaceRootPath": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\scripts\\portfolio.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\login.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:login.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\site.master||{B30AFBFF-D992-43B7-B62D-2642580A2883}",
+      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:site.master||{B30AFBFF-D992-43B7-B62D-2642580A2883}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\default.aspx.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:default.aspx.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\default.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:default.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\contactadmin.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:contactadmin.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\skills.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:skills.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\skills.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:skills.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\scripts\\portfolio.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
       "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:scripts\\portfolio.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\fixaboutcontenttable.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}",
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\fixaboutcontenttable.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}",
       "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:fixaboutcontenttable.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\setupaboutcontenttable.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}",
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\setupaboutcontenttable.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}",
       "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:setupaboutcontenttable.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\login.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:login.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\site.master||{B30AFBFF-D992-43B7-B62D-2642580A2883}",
-      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:site.master||{B30AFBFF-D992-43B7-B62D-2642580A2883}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\content\\portfolio-style.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
@@ -35,20 +59,16 @@
       "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:educationsystemsolution.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\education.aspx.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\education.aspx.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:education.aspx.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\education.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\education.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:education.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\education.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\education.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
       "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:education.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\login.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
-      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:login.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\home.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
@@ -59,28 +79,12 @@
       "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:home.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\contact.aspx.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:contact.aspx.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\contactadmin.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
-      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:contactadmin.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\contactinfo.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
       "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:contactinfo.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\logintest.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:logintest.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\skills.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:skills.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\skills.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
-      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:skills.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\contactinfocrudguide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|",
@@ -99,16 +103,8 @@
       "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:logintroubleshootingguide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\contact.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
-      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:contact.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\emailsetupguide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|",
       "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:emailsetupguide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\contact.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:contact.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
@@ -131,36 +127,48 @@
       "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:contactadmin.aspx.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\setupeducationtable.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame",
-      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:setupeducationtable.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\aboutcontent.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\aboutcontent.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
       "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:aboutcontent.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\aboutcontent.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\aboutcontent.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:aboutcontent.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\aboutcontent.aspx.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\aboutcontent.aspx.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:aboutcontent.aspx.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\setupaboutcontenttable.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame",
-      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:setupaboutcontenttable.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\aboutcontentcrudguide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|",
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\aboutcontentcrudguide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|",
       "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:aboutcontentcrudguide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\fixaboutcontenttable.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame",
-      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:fixaboutcontenttable.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame"
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\aboutcontentintegrationguide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|",
+      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:aboutcontentintegrationguide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\aboutcontentintegrationguide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|",
-      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:aboutcontentintegrationguide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|"
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\basiccookieimplementationguide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|",
+      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:basiccookieimplementationguide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\cookieimplementationguide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|",
+      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:cookieimplementationguide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\cookieremovalsummary.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|",
+      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:cookieremovalsummary.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\default.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:default.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\visitortrackingguide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|",
+      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:visitortrackingguide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|e:\\web dev\\portfolio\\portfolio-server\\adminpanel\\skillscookieremovalsummary.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|",
+      "RelativeMoniker": "D:0:0:{D2A73446-F487-434B-85CC-111F0CD7A9F6}|adminpanel.csproj|solutionrelative:skillscookieremovalsummary.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|"
     }
   ],
   "DocumentGroupContainers": [
@@ -170,229 +178,88 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 39,
-              "Title": "AboutContentIntegrationGuide.md",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContentIntegrationGuide.md",
-              "RelativeDocumentMoniker": "AboutContentIntegrationGuide.md",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContentIntegrationGuide.md",
-              "RelativeToolTip": "AboutContentIntegrationGuide.md",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAMQAAAAoAAAAAAAAAA==",
+              "DocumentIndex": 40,
+              "Title": "VisitorTrackingGuide.md",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\VisitorTrackingGuide.md",
+              "RelativeDocumentMoniker": "VisitorTrackingGuide.md",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\VisitorTrackingGuide.md",
+              "RelativeToolTip": "VisitorTrackingGuide.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAN4AAABWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
-              "WhenOpened": "2025-09-09T12:28:26.719Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "FixAboutContentTable.sql ",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\FixAboutContentTable.sql",
-              "RelativeDocumentMoniker": "FixAboutContentTable.sql",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\FixAboutContentTable.sql",
-              "RelativeToolTip": "FixAboutContentTable.sql",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
-              "WhenOpened": "2025-09-09T12:21:44.54Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 37,
-              "Title": "AboutContentCRUDGuide.md",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContentCRUDGuide.md",
-              "RelativeDocumentMoniker": "AboutContentCRUDGuide.md",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContentCRUDGuide.md",
-              "RelativeToolTip": "AboutContentCRUDGuide.md",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAN8AAAAYAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
-              "WhenOpened": "2025-09-09T12:17:17.693Z",
+              "WhenOpened": "2025-09-09T18:45:48.807Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "SetupAboutContentTable.sql ",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\SetupAboutContentTable.sql",
-              "RelativeDocumentMoniker": "SetupAboutContentTable.sql",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\SetupAboutContentTable.sql",
-              "RelativeToolTip": "SetupAboutContentTable.sql",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
-              "WhenOpened": "2025-09-09T12:16:47.584Z",
+              "Title": "Default.aspx.designer.cs",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Default.aspx.designer.cs",
+              "RelativeDocumentMoniker": "Default.aspx.designer.cs",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Default.aspx.designer.cs",
+              "RelativeToolTip": "Default.aspx.designer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-09T18:44:47.125Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "Default.aspx.cs",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Default.aspx.cs",
+              "RelativeDocumentMoniker": "Default.aspx.cs",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Default.aspx.cs",
+              "RelativeToolTip": "Default.aspx.cs",
+              "ViewState": "AgIAANYAAAAAAAAAAIBZwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-09T18:43:19.409Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "Login.aspx.cs",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Login.aspx.cs",
-              "RelativeDocumentMoniker": "Login.aspx.cs",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Login.aspx.cs",
-              "RelativeToolTip": "Login.aspx.cs",
-              "ViewState": "AgIAAFwAAAAAAAAAAAAuwGsAAABGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-08T17:19:23.532Z",
+              "Title": "Default.aspx",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Default.aspx",
+              "RelativeDocumentMoniker": "Default.aspx",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Default.aspx",
+              "RelativeToolTip": "Default.aspx",
+              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
+              "WhenOpened": "2025-09-09T18:42:37.034Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Site.Master",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Site.Master",
-              "RelativeDocumentMoniker": "Site.Master",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Site.Master",
-              "RelativeToolTip": "Site.Master",
-              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2025-09-08T19:52:21.903Z",
+              "DocumentIndex": 38,
+              "Title": "CookieRemovalSummary.md",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\CookieRemovalSummary.md",
+              "RelativeDocumentMoniker": "CookieRemovalSummary.md",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\CookieRemovalSummary.md",
+              "RelativeToolTip": "CookieRemovalSummary.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEoAAABkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2025-09-09T18:32:44.14Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
-              "Title": "AboutContent.aspx",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContent.aspx",
-              "RelativeDocumentMoniker": "AboutContent.aspx",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContent.aspx",
-              "RelativeToolTip": "AboutContent.aspx",
-              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2025-09-09T12:15:26.536Z",
+              "DocumentIndex": 37,
+              "Title": "CookieImplementationGuide.md",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\CookieImplementationGuide.md",
+              "RelativeDocumentMoniker": "CookieImplementationGuide.md",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\CookieImplementationGuide.md",
+              "RelativeToolTip": "CookieImplementationGuide.md",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2025-09-09T18:31:10.871Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "portfolio.js",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Scripts\\portfolio.js",
-              "RelativeDocumentMoniker": "Scripts\\portfolio.js",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Scripts\\portfolio.js",
-              "RelativeToolTip": "Scripts\\portfolio.js",
-              "ViewState": "AgIAAHUAAAAAAAAAAAAYwFIAAAAGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-09-08T14:44:08.969Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 34,
-              "Title": "AboutContent.aspx.cs",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContent.aspx.cs",
-              "RelativeDocumentMoniker": "AboutContent.aspx.cs",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContent.aspx.cs",
-              "RelativeToolTip": "AboutContent.aspx.cs",
-              "ViewState": "AgIAAK0BAAAAAAAAAABBwK4BAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-09T12:16:00.029Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 35,
-              "Title": "AboutContent.aspx.designer.cs",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContent.aspx.designer.cs",
-              "RelativeDocumentMoniker": "AboutContent.aspx.designer.cs",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContent.aspx.designer.cs",
-              "RelativeToolTip": "AboutContent.aspx.designer.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIQAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-09T12:16:13.695Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Education.aspx.designer.cs",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Education.aspx.designer.cs",
-              "RelativeDocumentMoniker": "Education.aspx.designer.cs",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Education.aspx.designer.cs",
-              "RelativeToolTip": "Education.aspx.designer.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAN8AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-09T11:50:01.049Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "Education.aspx.cs",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Education.aspx.cs",
-              "RelativeDocumentMoniker": "Education.aspx.cs",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Education.aspx.cs",
-              "RelativeToolTip": "Education.aspx.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIMBAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-09T11:49:40.355Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Education.aspx",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Education.aspx",
-              "RelativeDocumentMoniker": "Education.aspx",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Education.aspx",
-              "RelativeToolTip": "Education.aspx",
-              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2025-09-09T11:49:00.209Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "Home.aspx",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Home.aspx",
-              "RelativeDocumentMoniker": "Home.aspx",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Home.aspx",
-              "RelativeToolTip": "Home.aspx",
-              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2025-09-08T13:49:19.449Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "EducationSystemSolution.md",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\EducationSystemSolution.md",
-              "RelativeDocumentMoniker": "EducationSystemSolution.md",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\EducationSystemSolution.md",
-              "RelativeToolTip": "EducationSystemSolution.md",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAGwAAACHAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
-              "WhenOpened": "2025-09-09T11:18:58.127Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "SetupEducationTable.sql ",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\SetupEducationTable.sql",
-              "RelativeDocumentMoniker": "SetupEducationTable.sql",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\SetupEducationTable.sql",
-              "RelativeToolTip": "SetupEducationTable.sql",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
-              "WhenOpened": "2025-09-09T11:19:17.938Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "portfolio-style.css",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Content\\portfolio-style.css",
-              "RelativeDocumentMoniker": "Content\\portfolio-style.css",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Content\\portfolio-style.css",
-              "RelativeToolTip": "Content\\portfolio-style.css",
-              "ViewState": "AgIAAMYGAAAAAAAAAAAQwGEHAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2025-09-08T14:44:51.863Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
               "Title": "Login.aspx",
               "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Login.aspx",
               "RelativeDocumentMoniker": "Login.aspx",
@@ -405,19 +272,279 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "Contact.aspx.designer.cs",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Contact.aspx.designer.cs",
-              "RelativeDocumentMoniker": "Contact.aspx.designer.cs",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Contact.aspx.designer.cs",
-              "RelativeToolTip": "Contact.aspx.designer.cs",
-              "ViewState": "AgIAAH4AAAAAAAAAAAAcwAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 4,
+              "Title": "ContactAdmin.aspx",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\ContactAdmin.aspx",
+              "RelativeDocumentMoniker": "ContactAdmin.aspx",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\ContactAdmin.aspx",
+              "RelativeToolTip": "ContactAdmin.aspx",
+              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
+              "WhenOpened": "2025-09-08T20:45:54.617Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Site.Master",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Site.Master",
+              "RelativeDocumentMoniker": "Site.Master",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Site.Master",
+              "RelativeToolTip": "Site.Master",
+              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
+              "WhenOpened": "2025-09-08T19:52:21.903Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "SkillsCookieRemovalSummary.md",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\SkillsCookieRemovalSummary.md",
+              "RelativeDocumentMoniker": "SkillsCookieRemovalSummary.md",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\SkillsCookieRemovalSummary.md",
+              "RelativeToolTip": "SkillsCookieRemovalSummary.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAI8AAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2025-09-09T18:48:51.82Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "BasicCookieImplementationGuide.md",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\BasicCookieImplementationGuide.md",
+              "RelativeDocumentMoniker": "BasicCookieImplementationGuide.md",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\BasicCookieImplementationGuide.md",
+              "RelativeToolTip": "BasicCookieImplementationGuide.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAN4AAABlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2025-09-09T18:20:15.454Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Login.aspx.cs",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Login.aspx.cs",
+              "RelativeDocumentMoniker": "Login.aspx.cs",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Login.aspx.cs",
+              "RelativeToolTip": "Login.aspx.cs",
+              "ViewState": "AgIAAMoAAAAAAAAAAEBVwM4AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-08T20:44:05.03Z"
+              "WhenOpened": "2025-09-08T17:19:23.532Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 31,
+              "Title": "AboutContent.aspx",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContent.aspx",
+              "RelativeDocumentMoniker": "AboutContent.aspx",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContent.aspx",
+              "RelativeToolTip": "AboutContent.aspx",
+              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
+              "WhenOpened": "2025-09-09T12:15:26.536Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "portfolio.js",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Scripts\\portfolio.js",
+              "RelativeDocumentMoniker": "Scripts\\portfolio.js",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Scripts\\portfolio.js",
+              "RelativeToolTip": "Scripts\\portfolio.js",
+              "ViewState": "AgIAAHUAAAAAAAAAAAAYwFIAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2025-09-08T14:44:08.969Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Skills.aspx.cs",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Skills.aspx.cs",
+              "RelativeDocumentMoniker": "Skills.aspx.cs",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Skills.aspx.cs",
+              "RelativeToolTip": "Skills.aspx.cs",
+              "ViewState": "AgIAAJgCAAAAAAAAAAAEwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T18:17:11.902Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Skills.aspx",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Skills.aspx",
+              "RelativeDocumentMoniker": "Skills.aspx",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Skills.aspx",
+              "RelativeToolTip": "Skills.aspx",
+              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
+              "WhenOpened": "2025-09-08T18:17:58.604Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "AboutContentCRUDGuide.md",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContentCRUDGuide.md",
+              "RelativeDocumentMoniker": "AboutContentCRUDGuide.md",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContentCRUDGuide.md",
+              "RelativeToolTip": "AboutContentCRUDGuide.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAN8AAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2025-09-09T12:17:17.693Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "SetupAboutContentTable.sql ",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\SetupAboutContentTable.sql",
+              "RelativeDocumentMoniker": "SetupAboutContentTable.sql",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\SetupAboutContentTable.sql",
+              "RelativeToolTip": "SetupAboutContentTable.sql",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2025-09-09T12:16:47.584Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "FixAboutContentTable.sql ",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\FixAboutContentTable.sql",
+              "RelativeDocumentMoniker": "FixAboutContentTable.sql",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\FixAboutContentTable.sql",
+              "RelativeToolTip": "FixAboutContentTable.sql",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2025-09-09T12:21:44.54Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "AboutContentIntegrationGuide.md",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContentIntegrationGuide.md",
+              "RelativeDocumentMoniker": "AboutContentIntegrationGuide.md",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContentIntegrationGuide.md",
+              "RelativeToolTip": "AboutContentIntegrationGuide.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAMQAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2025-09-09T12:28:26.719Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "AboutContent.aspx.cs",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContent.aspx.cs",
+              "RelativeDocumentMoniker": "AboutContent.aspx.cs",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContent.aspx.cs",
+              "RelativeToolTip": "AboutContent.aspx.cs",
+              "ViewState": "AgIAAK0BAAAAAAAAAABBwK4BAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-09T12:16:00.029Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "AboutContent.aspx.designer.cs",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContent.aspx.designer.cs",
+              "RelativeDocumentMoniker": "AboutContent.aspx.designer.cs",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\AboutContent.aspx.designer.cs",
+              "RelativeToolTip": "AboutContent.aspx.designer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIQAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-09T12:16:13.695Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Education.aspx.designer.cs",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Education.aspx.designer.cs",
+              "RelativeDocumentMoniker": "Education.aspx.designer.cs",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Education.aspx.designer.cs",
+              "RelativeToolTip": "Education.aspx.designer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAN8AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-09T11:50:01.049Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Education.aspx.cs",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Education.aspx.cs",
+              "RelativeDocumentMoniker": "Education.aspx.cs",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Education.aspx.cs",
+              "RelativeToolTip": "Education.aspx.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIMBAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-09T11:49:40.355Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "Education.aspx",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Education.aspx",
+              "RelativeDocumentMoniker": "Education.aspx",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Education.aspx",
+              "RelativeToolTip": "Education.aspx",
+              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
+              "WhenOpened": "2025-09-09T11:49:00.209Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Home.aspx",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Home.aspx",
+              "RelativeDocumentMoniker": "Home.aspx",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Home.aspx",
+              "RelativeToolTip": "Home.aspx",
+              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
+              "WhenOpened": "2025-09-08T13:49:19.449Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "EducationSystemSolution.md",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\EducationSystemSolution.md",
+              "RelativeDocumentMoniker": "EducationSystemSolution.md",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\EducationSystemSolution.md",
+              "RelativeToolTip": "EducationSystemSolution.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAGwAAACHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2025-09-09T11:18:58.127Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "SetupEducationTable.sql ",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\SetupEducationTable.sql",
+              "RelativeDocumentMoniker": "SetupEducationTable.sql",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\SetupEducationTable.sql",
+              "RelativeToolTip": "SetupEducationTable.sql",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2025-09-09T11:19:17.938Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "portfolio-style.css",
+              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Content\\portfolio-style.css",
+              "RelativeDocumentMoniker": "Content\\portfolio-style.css",
+              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Content\\portfolio-style.css",
+              "RelativeToolTip": "Content\\portfolio-style.css",
+              "ViewState": "AgIAAMYGAAAAAAAAAAAQwGEHAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-09-08T14:44:51.863Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
               "Title": "ContactAdmin.aspx.designer.cs",
               "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\ContactAdmin.aspx.designer.cs",
               "RelativeDocumentMoniker": "ContactAdmin.aspx.designer.cs",
@@ -429,7 +556,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 21,
               "Title": "ContactInfoCRUDGuide.md",
               "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\ContactInfoCRUDGuide.md",
               "RelativeDocumentMoniker": "ContactInfoCRUDGuide.md",
@@ -441,7 +568,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 29,
               "Title": "ContactAdmin.aspx.cs",
               "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\ContactAdmin.aspx.cs",
               "RelativeDocumentMoniker": "ContactAdmin.aspx.cs",
@@ -453,19 +580,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "ContactAdmin.aspx",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\ContactAdmin.aspx",
-              "RelativeDocumentMoniker": "ContactAdmin.aspx",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\ContactAdmin.aspx",
-              "RelativeToolTip": "ContactAdmin.aspx",
-              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2025-09-08T20:45:54.617Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 18,
               "Title": "Home.aspx.cs",
               "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Home.aspx.cs",
               "RelativeDocumentMoniker": "Home.aspx.cs",
@@ -473,12 +588,11 @@
               "RelativeToolTip": "Home.aspx.cs",
               "ViewState": "AgIAAFwEAAAAAAAAAEBVwGAEAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-08T17:16:04.633Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-08T17:16:04.633Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 19,
               "Title": "ContactInfo.aspx",
               "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\ContactInfo.aspx",
               "RelativeDocumentMoniker": "ContactInfo.aspx",
@@ -486,11 +600,12 @@
               "RelativeToolTip": "ContactInfo.aspx",
               "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2025-09-08T19:46:38.788Z"
+              "WhenOpened": "2025-09-08T19:46:38.788Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 20,
               "Title": "LoginTest.aspx.cs",
               "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\LoginTest.aspx.cs",
               "RelativeDocumentMoniker": "LoginTest.aspx.cs",
@@ -502,31 +617,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "Skills.aspx.cs",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Skills.aspx.cs",
-              "RelativeDocumentMoniker": "Skills.aspx.cs",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Skills.aspx.cs",
-              "RelativeToolTip": "Skills.aspx.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-08T18:17:11.902Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "Skills.aspx",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Skills.aspx",
-              "RelativeDocumentMoniker": "Skills.aspx",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Skills.aspx",
-              "RelativeToolTip": "Skills.aspx",
-              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2025-09-08T18:17:58.604Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 22,
               "Title": "ContactInfo.aspx.designer.cs",
               "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\ContactInfo.aspx.designer.cs",
               "RelativeDocumentMoniker": "ContactInfo.aspx.designer.cs",
@@ -538,7 +629,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 23,
               "Title": "ContactInfo.aspx.cs",
               "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\ContactInfo.aspx.cs",
               "RelativeDocumentMoniker": "ContactInfo.aspx.cs",
@@ -550,7 +641,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 24,
               "Title": "LoginTroubleshootingGuide.md",
               "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\LoginTroubleshootingGuide.md",
               "RelativeDocumentMoniker": "LoginTroubleshootingGuide.md",
@@ -562,7 +653,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 28,
               "Title": "ContactCRUDGuide.md",
               "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\ContactCRUDGuide.md",
               "RelativeDocumentMoniker": "ContactCRUDGuide.md",
@@ -587,30 +678,6 @@
             {
               "$type": "Document",
               "DocumentIndex": 26,
-              "Title": "Contact.aspx.cs",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Contact.aspx.cs",
-              "RelativeDocumentMoniker": "Contact.aspx.cs",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Contact.aspx.cs",
-              "RelativeToolTip": "Contact.aspx.cs",
-              "ViewState": "AgIAAKoAAAAAAAAAAAAcwAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-08T17:26:18.023Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "Contact.aspx",
-              "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Contact.aspx",
-              "RelativeDocumentMoniker": "Contact.aspx",
-              "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Contact.aspx",
-              "RelativeToolTip": "Contact.aspx",
-              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2025-09-08T17:25:04.948Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 27,
               "Title": "Web.config",
               "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Web.config",
               "RelativeDocumentMoniker": "Web.config",
@@ -623,15 +690,14 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 27,
               "Title": "portfolio-style.css",
               "DocumentMoniker": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Content\\portfolio-style.css",
               "RelativeDocumentMoniker": "Content\\portfolio-style.css",
               "ToolTip": "E:\\Web Dev\\portfolio\\portfolio-server\\adminpanel\\Content\\portfolio-style.css",
               "RelativeToolTip": "Content\\portfolio-style.css",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2025-09-08T14:51:45.45Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-08T14:51:45.45Z"
             }
           ]
         }
