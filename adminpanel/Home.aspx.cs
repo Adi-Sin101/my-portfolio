@@ -341,7 +341,6 @@ namespace adminpanel
                         ltlName.Text = heroHeading;
                         ltlRole.Text = roleText;
                         ltlHeroDescription.Text = description;
-                        ltlAboutDescription.Text = description;
                         
                         // Social links
                         hlnkGitHub.NavigateUrl = !string.IsNullOrEmpty(gitHubUrl) ? gitHubUrl : "#";
@@ -354,6 +353,9 @@ namespace adminpanel
                         imgHero.ImageUrl = !string.IsNullOrEmpty(imagePath) ? imagePath : "Images/default-profile.jpg";
                         
                         reader.Close();
+                        
+                        // Load About Me content from AboutContent table
+                        LoadAboutContent(con);
                         
                         // Load contact information from ContactInfo table
                         LoadContactInfoFromDatabase(con, email, phone, linkedInUrl, gitHubUrl);
@@ -373,6 +375,49 @@ namespace adminpanel
             }
         }
 
+        private void LoadAboutContent(SqlConnection con)
+        {
+            try
+            {
+                // Load About Me content from AboutContent table
+                string aboutQuery = "SELECT TOP 1 AboutText FROM AboutContent ORDER BY ModifiedDate DESC, Id DESC";
+                
+                SqlCommand aboutCmd = new SqlCommand(aboutQuery, con);
+                object aboutResult = aboutCmd.ExecuteScalar();
+                
+                if (aboutResult != null && !string.IsNullOrEmpty(aboutResult.ToString()))
+                {
+                    // Use content from AboutContent table
+                    ltlAboutDescription.Text = aboutResult.ToString();
+                    System.Diagnostics.Debug.WriteLine("About content loaded from AboutContent table");
+                }
+                else
+                {
+                    // Fall back to HomeContent description if AboutContent is empty
+                    string fallbackQuery = "SELECT TOP 1 Description FROM HomeContent ORDER BY Id DESC";
+                    SqlCommand fallbackCmd = new SqlCommand(fallbackQuery, con);
+                    object fallbackResult = fallbackCmd.ExecuteScalar();
+                    
+                    if (fallbackResult != null && !string.IsNullOrEmpty(fallbackResult.ToString()))
+                    {
+                        ltlAboutDescription.Text = fallbackResult.ToString();
+                        System.Diagnostics.Debug.WriteLine("About content loaded from HomeContent table (fallback)");
+                    }
+                    else
+                    {
+                        ltlAboutDescription.Text = "Please add your About Me content through the Admin Panel > About Content section.";
+                        System.Diagnostics.Debug.WriteLine("Using default About content message");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // If there's an error, use a default message
+                ltlAboutDescription.Text = "Please add your About Me content through the Admin Panel > About Content section.";
+                System.Diagnostics.Debug.WriteLine("Error loading About content: " + ex.Message);
+            }
+        }
+        
         private void LoadContactInfoFromDatabase(SqlConnection con, string fallbackEmail, string fallbackPhone, string fallbackLinkedIn, string fallbackGitHub)
         {
             try
@@ -518,55 +563,65 @@ namespace adminpanel
                 try
                 {
                     con.Open();
-                    // Check if IsActive column exists
-                    string checkQuery = @"SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS 
-                                        WHERE TABLE_NAME = 'Education' AND COLUMN_NAME = 'IsActive'";
-                    SqlCommand checkCmd = new SqlCommand(checkQuery, con);
-                    int hasIsActive = (int)checkCmd.ExecuteScalar();
                     
-                    string query;
-                    if (hasIsActive > 0)
-                    {
-                        query = "SELECT Degree, Institution, Year, Grade FROM Education WHERE IsActive = 1 ORDER BY StartYear DESC";
-                    }
-                    else
-                    {
-                        // Use basic query without IsActive column
-                        query = "SELECT Degree, Institution, Year, Grade FROM Education ORDER BY Id DESC";
-                    }
+                    // Query your Education table with the correct columns: Id, Degree, Institution, Year, Grade
+                    string query = "SELECT Id, Degree, Institution, Year, Grade FROM Education ORDER BY Id DESC";
                     
                     SqlDataAdapter da = new SqlDataAdapter(query, con);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
                     
+                    // Add YearInfo column for display formatting
+                    if (!dt.Columns.Contains("YearInfo"))
+                    {
+                        dt.Columns.Add("YearInfo", typeof(string));
+                    }
+                    
+                    // Process the data for correct display format
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        string degree = row["Degree"].ToString();
+                        string institution = row["Institution"].ToString();
+                        string year = row["Year"].ToString();
+                        string grade = row["Grade"].ToString();
+                        
+                        // Format based on degree type
+                        if (degree.Contains("B.Sc") || degree.Contains("Bachelor"))
+                        {
+                            // For ongoing Bachelor's degree - show Expected year
+                            if (year.Contains("Expected") || year.Contains("2027") || string.IsNullOrEmpty(year))
+                            {
+                                row["YearInfo"] = "2027"; // Expected year only
+                                row["Grade"] = grade.StartsWith("CGPA") ? grade : "CGPA: " + grade;
+                            }
+                            else
+                            {
+                                row["YearInfo"] = "";
+                                row["Grade"] = grade.StartsWith("CGPA") ? grade : "CGPA: " + grade;
+                            }
+                        }
+                        else if (degree.Contains("HSC") || degree.Contains("SSC"))
+                        {
+                            // For HSC/SSC - add year to institution
+                            if (!institution.Contains(year) && !string.IsNullOrEmpty(year))
+                            {
+                                row["Institution"] = institution + " | " + year;
+                            }
+                            row["YearInfo"] = ""; // No separate year info
+                            row["Grade"] = grade.StartsWith("GPA") ? grade : "GPA: " + grade;
+                        }
+                        else
+                        {
+                            // For other degrees
+                            row["YearInfo"] = "";
+                            row["Grade"] = grade.StartsWith("GPA") ? grade : "GPA: " + grade;
+                        }
+                    }
+                    
                     if (dt.Rows.Count == 0)
                     {
-                        // Add sample education data
-                        dt.Columns.Add("Degree");
-                        dt.Columns.Add("Institution");
-                        dt.Columns.Add("Year");
-                        dt.Columns.Add("Grade");
-                        
-                        DataRow row1 = dt.NewRow();
-                        row1["Degree"] = "B.Sc in Computer Science";
-                        row1["Institution"] = "Khulna University of Engineering & Technology";
-                        row1["Year"] = "Expected: 2027";
-                        row1["Grade"] = "CGPA: 3.28 / 4.00";
-                        dt.Rows.Add(row1);
-                        
-                        DataRow row2 = dt.NewRow();
-                        row2["Degree"] = "HSC";
-                        row2["Institution"] = "Khulna Govt. Girls' College";
-                        row2["Year"] = "2021";
-                        row2["Grade"] = "GPA: 5.00";
-                        dt.Rows.Add(row2);
-                        
-                        DataRow row3 = dt.NewRow();
-                        row3["Degree"] = "SSC";
-                        row3["Institution"] = "Govt. Coronation Secondary Girls' School";
-                        row3["Year"] = "2019";
-                        row3["Grade"] = "GPA: 5.00";
-                        dt.Rows.Add(row3);
+                        // Add sample education data if no records found
+                        dt = CreateSampleEducationData();
                     }
                     
                     rptEducation.DataSource = dt;
@@ -575,23 +630,56 @@ namespace adminpanel
                 catch (Exception ex)
                 {
                     // Handle error with sample data
-                    DataTable errorDt = new DataTable();
-                    errorDt.Columns.Add("Degree");
-                    errorDt.Columns.Add("Institution");
-                    errorDt.Columns.Add("Year");
-                    errorDt.Columns.Add("Grade");
-                    
-                    DataRow errorRow = errorDt.NewRow();
-                    errorRow["Degree"] = "Error loading education";
-                    errorRow["Institution"] = ex.Message;
-                    errorRow["Year"] = "N/A";
-                    errorRow["Grade"] = "N/A";
-                    errorDt.Rows.Add(errorRow);
-                    
+                    DataTable errorDt = CreateSampleEducationData();
                     rptEducation.DataSource = errorDt;
                     rptEducation.DataBind();
+                    
+                    System.Diagnostics.Debug.WriteLine("Education error: " + ex.Message);
                 }
             }
+        }
+
+        private DataTable CreateSampleEducationData()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Id");
+            dt.Columns.Add("Degree");
+            dt.Columns.Add("Institution");
+            dt.Columns.Add("Year");
+            dt.Columns.Add("Grade");
+            dt.Columns.Add("YearInfo");
+            
+            // B.Sc in Computer Science (Ongoing)
+            DataRow row1 = dt.NewRow();
+            row1["Id"] = 1;
+            row1["Degree"] = "B.Sc in Computer Science";
+            row1["Institution"] = "Khulna University of Engineering & Technology";
+            row1["Year"] = "Expected: 2027";
+            row1["Grade"] = "CGPA: 3.28 / 4.00";
+            row1["YearInfo"] = "2027";
+            dt.Rows.Add(row1);
+            
+            // HSC (Completed)
+            DataRow row2 = dt.NewRow();
+            row2["Id"] = 2;
+            row2["Degree"] = "HSC";
+            row2["Institution"] = "Khulna Govt. Girls' College | 2021";
+            row2["Year"] = "2021";
+            row2["Grade"] = "GPA: 5.00";
+            row2["YearInfo"] = "";
+            dt.Rows.Add(row2);
+            
+            // SSC (Completed)
+            DataRow row3 = dt.NewRow();
+            row3["Id"] = 3;
+            row3["Degree"] = "SSC";
+            row3["Institution"] = "Govt. Coronation Secondary Girls' School | 2019";
+            row3["Year"] = "2019";
+            row3["Grade"] = "GPA: 5.00";
+            row3["YearInfo"] = "";
+            dt.Rows.Add(row3);
+            
+            return dt;
         }
 
         private void LoadSkills()
@@ -911,7 +999,21 @@ namespace adminpanel
             ltlName.Text = "Your Name";
             ltlRole.Text = "Your Role";
             ltlHeroDescription.Text = "Please update your personal information in the Admin Panel > About section.";
-            ltlAboutDescription.Text = "Please update your personal information in the Admin Panel > About section.";
+            
+            // Load About Me content from AboutContent table even when using defaults
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                try
+                {
+                    con.Open();
+                    LoadAboutContent(con);
+                }
+                catch (Exception ex)
+                {
+                    ltlAboutDescription.Text = "Please add your About Me content through the Admin Panel > About Content section.";
+                    System.Diagnostics.Debug.WriteLine("Error loading About content in SetDefaultPersonalInfo: " + ex.Message);
+                }
+            }
             
             // Default social links
             hlnkGitHub.NavigateUrl = "#";

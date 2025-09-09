@@ -100,6 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="About.aspx" />
+    <Content Include="AboutContent.aspx" />
     <Content Include="Contact.aspx" />
     <Content Include="ContactAdmin.aspx" />
     <Content Include="ContactInfo.aspx" />
@@ -124,9 +125,11 @@
     <Content Include="Database\portfolio-schema.sql" />
     <Content Include="Default.aspx" />
     <Content Include="EditProject.aspx" />
+    <Content Include="Education.aspx" />
     <Content Include="Experience.aspx" />
     <Content Include="ExperienceDebugSimple.aspx" />
     <Content Include="favicon.ico" />
+    <Content Include="FixAboutContentTable.sql" />
     <Content Include="Global.asax" />
     <Content Include="Home.aspx" />
     <Content Include="Login.aspx" />
@@ -165,6 +168,9 @@
     <Content Include="ContactCRUDGuide.md" />
     <Content Include="LoginTroubleshootingGuide.md" />
     <Content Include="ContactInfoCRUDGuide.md" />
+    <Content Include="EducationSystemSolution.md" />
+    <Content Include="AboutContentCRUDGuide.md" />
+    <Content Include="AboutContentIntegrationGuide.md" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -193,6 +199,8 @@
     <Content Include="Scripts\WebForms\WebForms.js" />
     <Content Include="Scripts\WebForms\WebParts.js" />
     <Content Include="Scripts\WebForms\WebUIValidation.js" />
+    <Content Include="SetupAboutContentTable.sql" />
+    <Content Include="SetupEducationTable.sql" />
     <Content Include="Site.Master" />
     <Content Include="Skills.aspx" />
     <Content Include="TestDB.aspx" />
@@ -202,6 +210,13 @@
     <Content Include="Site.Mobile.Master" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AboutContent.aspx.cs">
+      <DependentUpon>AboutContent.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AboutContent.aspx.designer.cs">
+      <DependentUpon>AboutContent.aspx</DependentUpon>
+    </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="About.aspx.cs">
       <DependentUpon>About.aspx</DependentUpon>
@@ -245,6 +260,13 @@
     </Compile>
     <Compile Include="EditProject.aspx.designer.cs">
       <DependentUpon>EditProject.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Education.aspx.cs">
+      <DependentUpon>Education.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Education.aspx.designer.cs">
+      <DependentUpon>Education.aspx</DependentUpon>
     </Compile>
     <Compile Include="Experience.aspx.cs">
       <DependentUpon>Experience.aspx</DependentUpon>

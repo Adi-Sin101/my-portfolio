@@ -68,26 +68,34 @@
                     <h3>About Me</h3>
                     <p><asp:Literal ID="ltlAboutDescription" runat="server" /></p>
                 </div>
-                <div class="education">
-                    <h3>Education</h3>
-                    <div class="timeline vertical-right">
-                        <asp:Repeater ID="rptEducation" runat="server">
-                            <ItemTemplate>
-                                <div class="timeline-item">
-                                    <div class="timeline-dot"></div>
-                                    <div class="timeline-content">
-                                        <h4><%# Eval("Degree") %></h4>
-                                        <p class="school"><%# Eval("Institution") %></p>
-                                        <p><%# Eval("Year") %></p>
-                                        <p><%# Eval("Grade") %></p>
-                                    </div>
-                                </div>
-                            </ItemTemplate>
-                        </asp:Repeater>
-                    </div>
-                </div>
             </div>
         </section>
+
+   <!-- Education Section -->
+<section id="education" class="education-section fade-in">
+    <h3>Education</h3>
+    <div class="education-timeline">
+        <div class="timeline-line"></div>
+        <asp:Repeater ID="rptEducation" runat="server">
+            <ItemTemplate>
+                <div class="education-item">
+                    <div class="timeline-dot"></div>
+                    <div class="education-card">
+                        <h4><%# Eval("Degree") %></h4>
+                        <p class="institution"><%# Eval("Institution") %></p>
+                        
+                        <%-- Show Expected Year only for B.Sc degree --%>
+                        <%# !string.IsNullOrEmpty(Eval("YearInfo").ToString()) ? "<p class='year-info'>Expected: " + Eval("YearInfo") + "</p>" : "" %>
+                        
+                        <%-- Show Grade with proper formatting --%>
+                        <p class="grade"><%# Eval("Grade") %></p>
+                    </div>
+                </div>
+            </ItemTemplate>
+        </asp:Repeater>
+    </div>
+</section>
+
 
         <!-- Skills Section -->
         <section id="skills" class="skills-section fade-in">
