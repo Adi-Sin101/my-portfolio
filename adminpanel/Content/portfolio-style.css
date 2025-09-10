@@ -1,6 +1,3 @@
-/* ===============================================
-   === CONTACT SECTION - ALL CONTACT STYLES GROUPED HERE ===
-   =============================================== */
 
 /* Contact Section Container */
 .contact-section {
@@ -68,8 +65,19 @@
     transition: background 0.2s, color 0.2s;
 }
 
+/* Contact Card Links - Make them white */
+.contact-card-link {
+    color: #ffffff !important;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
 
-
+.contact-card-link:hover {
+    color: #ffffff !important;
+    text-decoration: underline;
+}
 
 .contact-card-label {
     color: #a78bfa;
@@ -257,19 +265,19 @@
     }
 
     .contact-box a, .contact-box a:hover {
-        color: #fff !important;
+        color: #ffffff !important;
         text-decoration: underline;
         font-weight: 500;
         word-break: break-all;
     }
 
     .contact-box strong, .contact-box a {
-        color: #fff !important;
-        transition: color 0.2s;
+        color: #ffffff !important;
+        transition: opacity 0.2s;
     }
 
     .contact-box:hover strong, .contact-box:hover a {
-        color: #fff !important;
+        color: #ffffff !important;
     }
 
 /* Contact Dividers and Icons */
@@ -369,10 +377,6 @@
     }
 }
 
-/* ===============================================
-   === END OF CONTACT STYLES ===
-   =============================================== */
-/* Unify card transitions for skills, experience, and projects */
 .skill, .experience-card, .project-card {
     transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -467,6 +471,40 @@ body {
     color: #ffffff;
 }
 
+/* Hamburger Menu Button */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    padding: 8px;
+    background: transparent;
+    border: none;
+    z-index: 1001;
+    margin-right: 5px; /* Add margin to shift left */
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background: #ffffff;
+    margin: 3px 0;
+    transition: all 0.3s ease;
+    border-radius: 2px;
+}
+
+/* Hamburger Animation */
+.hamburger.active span:nth-child(1) {
+    transform: rotate(-45deg) translate(-5px, 6px);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+    transform: rotate(45deg) translate(-5px, -6px);
+}
+
 /* Navigation Links Container */
 .nav-links {
     display: flex;
@@ -552,27 +590,80 @@ body {
         gap: 0;
     }
 
-    .nav-links {
-        gap: 20px;
-        justify-content: flex-end;
-        flex-wrap: nowrap;
-        align-items: center;
+    /* Show hamburger menu */
+    .hamburger {
+        display: flex;
     }
 
-        .nav-links a {
-            font-size: 16px;
-            padding: 0 4px;
-        }
+  
+    .nav-links {
+        position: fixed;
+        top: 90px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 95%;
+        max-width: 400px;
+        background: rgba(36, 10, 39, 0.95);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(167, 139, 250, 0.3);
+        border-radius: 14px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 8px rgba(147, 51, 234, 0.4);
+        flex-direction: column;
+        gap: 0;
+        height: auto;
+        padding: 20px 0;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateX(-50%) translateY(-20px);
+        transition: all 0.3s ease;
+    }
 
-            /* Active state underline for tablet */
-            .nav-links a.active::after {
-                bottom: 6px;
-            }
+    /* Show nav links when hamburger is active */
+    .nav-links.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+    }
 
-            /* Hover effect underline for tablet */
-            .nav-links a::before {
-                bottom: 6px;
-            }
+    .nav-links li {
+        width: 100%;
+        height: auto;
+        text-align: center;
+    }
+
+    .nav-links a {
+        width: 100%;
+        height: auto;
+        padding: 15px 20px;
+        font-size: 16px;
+        border-bottom: 1px solid rgba(167, 139, 250, 0.1);
+        justify-content: center;
+    }
+
+    .nav-links li:last-child a {
+        border-bottom: none;
+    }
+
+    /* Update hover effects for mobile */
+    .nav-links a::before {
+        display: none;
+    }
+
+    .nav-links a:hover {
+        background: rgba(167, 139, 250, 0.1);
+        border-radius: 8px;
+    }
+
+    /* Active state underline for tablet */
+    .nav-links a.active::after {
+        display: none;
+    }
+
+    .nav-links a.active {
+        background: rgba(167, 139, 250, 0.2);
+        border-radius: 8px;
+    }
 }
 
 /* Navbar Responsive Styles for Mobile (480px and below) */
@@ -588,54 +679,38 @@ body {
     .nav-container {
         justify-content: space-between;
         gap: 0;
+        padding-right: 5px; /* Add padding to prevent hamburger overflow */
+    }
+
+    .hamburger {
+        display: flex;
+        margin-right: 8px; /* Increase margin on mobile */
+        padding: 6px; /* Reduce padding on mobile */
+    }
+
+    .hamburger span {
+        width: 20px;
+        height: 2px;
     }
 
     .nav-links {
-        gap: 15px;
-        justify-content: flex-end;
-        flex-wrap: nowrap;
-        align-items: center;
+        top: 70px;
+        width: 98%;
+        max-width: 350px;
+        padding: 15px 0;
     }
 
-        .nav-links a {
-            font-size: 14px;
-            padding: 0 2px;
-        }
+    .nav-links a {
+        padding: 12px 15px;
+        font-size: 14px;
+    }
 
     .logo {
         font-size: 16px;
+        margin-left: 5px; 
     }
-
-    /* Active state underline for mobile */
-    .nav-links a.active::after {
-        bottom: 5px;
-        height: 1.5px;
-    }
-
-    /* Hover effect underline for mobile */
-    .nav-links a::before {
-        bottom: 5px;
-        height: 1.5px;
-    }
-
-    /* Nav links hover animation on mobile */
-    .nav-links a {
-        transition: color 0.3s ease, transform 0.2s;
-    }
-
-        .nav-links a:hover {
-            color: #a78bfa;
-            transform: translateY(-1px);
-        }
 }
 
-/* ===============================================
-   === END OF NAVBAR STYLES ===
-   =============================================== */
-
-/* ===============================================
-   === HERO SECTION - ALL HERO STYLES GROUPED HERE ===
-   =============================================== */
 
 /* Hero Section Container */
 .hero-section {
@@ -659,6 +734,11 @@ body {
 /* Hero Typography */
 .highlight {
     color: #ffffff;
+    font-weight: 800;
+}
+
+.highlight-purple {
+    color: #a78bfa;
     font-weight: 800;
 }
 
@@ -734,13 +814,13 @@ h2 {
 
 /* Social Icons */
 .social-icons a {
-    color: #94a3b8;
+    color: #ffffff !important;
     margin-right: 15px;
-    transition: color 0.3s;
+    transition: color 0.3s ease;
 }
 
     .social-icons a:hover {
-        color: #ffffff;
+        color: #a78bfa !important;
     }
 
 .social-icons img {
@@ -837,13 +917,6 @@ h2 {
     }
 }
 
-/* ===============================================
-   === END OF HERO STYLES ===
-   =============================================== */
-
-/* ===============================================
-   === ABOUT SECTION - ALL ABOUT STYLES GROUPED HERE ===
-   =============================================== */
 
 /* About Section Container */
 .about-section {
@@ -896,14 +969,6 @@ h2 {
         }
 }
 
-/* ===============================================
-   === END OF ABOUT STYLES ===
-   =============================================== */
-
-/* ===============================================
-   === EDUCATION SECTION - ALL EDUCATION STYLES GROUPED HERE ===
-   =============================================== */
-
 /* Education Section Container */
 .education {
     background: transparent;
@@ -955,9 +1020,6 @@ h2 {
         }
 }
 
-/* ===============================================
-   === END OF EDUCATION STYLES ===
-   =============================================== */
 
 /* === Centered White Section Headings === */
 .about-section h3,
@@ -1110,13 +1172,7 @@ h2 {
         }
 }
 
-/* ===============================================
-   === END OF TIMELINE STYLES ===
-   =============================================== */
 
-/* ===============================================
-   === SKILLS SECTION - ALL SKILLS STYLES GROUPED HERE ===
-   =============================================== */
 
 /* Skills Section Container */
 .skills-section {
@@ -1227,11 +1283,7 @@ h2 {
     }
 }
 
-/* ===============================================
-   === END OF SKILLS STYLES ===
-   =============================================== */
 
-/* Keep exactly 5 icons per row on all viewports as requested */
 
 /* === Responsive === */
 @media (max-width: 768px) {
@@ -1269,9 +1321,7 @@ h2 {
             box-shadow: 0 12px 36px 0 rgba(167, 139, 250, 0.28), 0 3px 18px rgba(36, 10, 39, 0.24);
         }
 }
-/* ===============================================
-   === EXPERIENCE SECTION - ALL EXPERIENCE STYLES GROUPED HERE ===
-   =============================================== */
+
 
 /* Experience Section Container */
 .experience-section {
@@ -1405,13 +1455,7 @@ h2 {
         }
 }
 
-/* ===============================================
-   === END OF EXPERIENCE STYLES ===
-   =============================================== */
 
-/* ===============================================
-   === PROJECTS SECTION - ALL PROJECTS STYLES GROUPED HERE ===
-   =============================================== */
 
 /* Projects Section Container */
 .projects-section {
@@ -1557,10 +1601,6 @@ h2 {
     }
 }
 
-/* ===============================================
-   === END OF PROJECTS STYLES ===
-   =============================================== */
-
 /* removed legacy dark mode overrides */
 
 /* === Fade-in Animation === */
@@ -1671,219 +1711,19 @@ body,
     color: #fff !important;
 }
 
-
-
-/* === Responsive Hero Section Enhancements Only === */
-
-/* Tablets and smaller (max-width: 768px) */
-@media (max-width: 768px) {
-    .hero-section {
-        padding: 40px 20px;
-    }
-
-    .hero-content {
-        flex-direction: column;
-        gap: 20px;
-        text-align: center;
-    }
-
-    .hero-text {
-        max-width: 100%;
-    }
-
-    h1 {
-        font-size: 2.5rem;
-    }
-
-    #role-text {
-        font-size: 2rem;
-    }
-
-    .hero-text p {
-        font-size: 1rem;
-        margin-bottom: 20px;
-    }
-
-    .hero-buttons {
-        margin: 20px 0;
-    }
-
-    .hero-image img {
-        width: 260px;
-        height: 260px;
-        transform: translateX(0); /* center image on small screens */
-    }
-
-    .social-icons img {
-        width: 25px;
-        margin-right: 8px;
-        margin-bottom: 20px;
-    }
+/* Contact Box Links - Ensure they're always white */
+.contact-box a, .contact-box a:hover {
+    color: #ffffff !important;
+    text-decoration: underline;
+    font-weight: 500;
+    word-break: break-all;
 }
 
-/* Mobile devices (max-width: 480px) */
-@media (max-width: 480px) {
-    h1 {
-        font-size: 1.9rem;
-    }
+.contact-box strong, .contact-box a {
+    color: #ffffff !important;
+    transition: opacity 0.2s;
+}
 
-    #role-text {
-        font-size: 1.5rem;
-    }
-
-    .hero-text p {
-        font-size: 0.95rem;
-    }
-
-    .hero-buttons .btn {
-        padding: 8px 14px;
-        font-size: 0.9rem;
-        margin-right: 6px;
-    }
-
-    .hero-image img {
-        width: 200px;
-        height: 200px;
-    }
-
-    .social-icons img {
-        width: 22px;
-        margin-right: 6px;
-        margin-bottom: 15px;
-    }
-
-    /* About Section Mobile */
-    .about-section {
-        padding: 30px 15px;
-        margin: 15px auto;
-    }
-
-        .about-section h3 {
-            font-size: 1.5rem;
-        }
-
-    /* Skills Section Mobile */
-    .skills-section {
-        padding: 30px 15px;
-        margin: 15px auto;
-    }
-
-        .skills-section h3 {
-            font-size: 1.5rem;
-        }
-
-    .skills-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-    }
-
-    .skill-icon {
-        font-size: 2.5rem;
-        height: 48px;
-    }
-
-    /* Maintain hover animations for skills on mobile */
-    .skill {
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-        .skill:hover {
-            transform: translateY(-8px) scale(1.03);
-            box-shadow: 0 8px 24px 0 rgba(167, 139, 250, 0.24), 0 2px 12px rgba(36, 10, 39, 0.20);
-        }
-
-    /* Experience Section Mobile */
-    .experience-section {
-        padding: 30px 15px;
-        margin: 15px auto;
-    }
-
-        .experience-section h3 {
-            font-size: 1.5rem;
-        }
-
-    /* Maintain hover animations for experience cards on mobile */
-    .experience-card {
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-        .experience-card:hover {
-            transform: translateY(-6px) scale(1.02);
-            box-shadow: 0 8px 24px rgba(120, 53, 150, 0.14), 0 2px 8px rgba(36, 10, 39, 0.18);
-        }
-
-    /* Projects Section Mobile */
-    .projects-section {
-        padding: 30px 15px;
-        margin: 15px auto;
-    }
-
-        .projects-section h3 {
-            font-size: 1.5rem;
-        }
-
-    /* Maintain hover animations for project cards on mobile */
-    .project-card {
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-        .project-card:hover {
-            transform: translateY(-6px) scale(1.02);
-            box-shadow: 0 8px 24px rgba(120, 53, 150, 0.14), 0 2px 8px rgba(36, 10, 39, 0.18);
-        }
-
-
-
-
-
-    /* Timeline Mobile */
-    .timeline.vertical-right {
-        padding-left: 15px;
-    }
-
-    .timeline-item {
-        padding-left: 15px;
-        margin: 20px 0;
-    }
-
-    .timeline-dot {
-        left: -25px;
-        width: 12px;
-        height: 12px;
-    }
-
-    .timeline-content {
-        padding: 15px;
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-        .timeline-content:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(120, 53, 150, 0.10), 0 1px 6px rgba(36, 10, 39, 0.14);
-        }
-
-        .timeline-content h4 {
-            font-size: 1.1rem;
-        }
-
-    /* Button hover animations on mobile */
-    .btn {
-        transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-    }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-    /* Form button hover animations on mobile */
-    .contact-form button[type="submit"] {
-        transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
-    }
-
-        .contact-form button[type="submit"]:hover {
-            background: #f8fafc;
-            box-shadow: 0 6px 20px rgba(167,139,250,0.18);
-            transform: translateY(-2px);
-        }
+.contact-box:hover strong, .contact-box:hover a {
+    color: #ffffff !important;
 }

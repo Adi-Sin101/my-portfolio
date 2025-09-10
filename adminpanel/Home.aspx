@@ -18,7 +18,15 @@
         <nav class="navbar">
             <div class="nav-container">
                 <div class="logo"><asp:Literal ID="ltlNavName" runat="server" Text="Adiba Tahsin" /></div>
-                <ul class="nav-links">
+                
+                <!-- Hamburger Menu Button -->
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                
+                <ul class="nav-links" id="navLinks">
                     <li><a href="#home">Home</a></li>
                     <li><a href="#about">About</a></li>
                     <li><a href="#skills">Skills</a></li>
@@ -69,32 +77,34 @@
                     <p><asp:Literal ID="ltlAboutDescription" runat="server" /></p>
                 </div>
             </div>
-        </section>
+      <!--  </section>
 
    <!-- Education Section -->
-<section id="education" class="education-section fade-in">
+<!--<section id="education" class="education fade-in"> -->
+    <div class="about-container">
     <h3>Education</h3>
-    <div class="education-timeline">
-        <div class="timeline-line"></div>
+    <div class="timeline vertical-right">
         <asp:Repeater ID="rptEducation" runat="server">
             <ItemTemplate>
-                <div class="education-item">
+                <div class="timeline-item">
                     <div class="timeline-dot"></div>
-                    <div class="education-card">
+                    <div class="timeline-content">
                         <h4><%# Eval("Degree") %></h4>
                         <p class="institution"><%# Eval("Institution") %></p>
                         
-                        <%-- Show Expected Year only for B.Sc degree --%>
-                        <%# !string.IsNullOrEmpty(Eval("YearInfo").ToString()) ? "<p class='year-info'>Expected: " + Eval("YearInfo") + "</p>" : "" %>
+                        <%# !string.IsNullOrEmpty(Eval("YearInfo").ToString()) 
+                            ? "<p class='year-info'>Expected: " + Eval("YearInfo") + "</p>" 
+                            : "" %>
                         
-                        <%-- Show Grade with proper formatting --%>
                         <p class="grade"><%# Eval("Grade") %></p>
                     </div>
                 </div>
             </ItemTemplate>
         </asp:Repeater>
     </div>
+        </div>
 </section>
+
 
 
         <!-- Skills Section -->

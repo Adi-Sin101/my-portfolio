@@ -64,12 +64,6 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" runat="server" href="~/Contact.aspx" target="_blank" 
-                               style="color: #17a2b8 !important; font-weight: bold;">
-                                <i class="fas fa-envelope"></i> Contact Page
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <asp:LinkButton ID="lnkLogout" runat="server" CssClass="nav-link" OnClick="lnkLogout_Click" 
                                 style="color: #dc3545 !important; font-weight: bold;">
                                 <i class="fas fa-sign-out-alt"></i> Logout
